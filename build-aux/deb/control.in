@@ -21,6 +21,7 @@ Description: Set up Zwift on Linux, launch it and connect your sensors
  .
  The sensor bridge connects smart trainers and heart rate straps via BlueZ and
  offers them to Zwift as Wahoo Direct Connect devices, without Zwift Companion.
+ Alternatively the Zwift Companion app on the phone can hold the sensors.
  .
  Zwift does not officially support Linux. The optional sign-in via the browser
  violates the Zwift terms of service and is at your own risk.

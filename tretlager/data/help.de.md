@@ -7,12 +7,16 @@ Pulsgurt.
 - **Zwift unter Wine**: Der offizielle Windows-Client von Zwift läuft unter Wine, das Tretlager
   mitbringt. Tretlager lädt Zwift von Zwift, prüft die Signatur und verändert nichts daran.
 - **Sensor-Bridge**: Zwift kann unter Wine kein Bluetooth. Die Bridge verbindet Trainer und
-  Pulsgurt und bietet sie Zwift als Wahoo-Geräte an; die Companion App ist nicht nötig.
+  Pulsgurt und bietet sie Zwift als Wahoo-Geräte an; ein Smartphone ist nicht nötig.
+- **Oder die Companion App**: Alternativ verbindet die Zwift Companion App auf dem Smartphone die
+  Sensoren und reicht sie über das lokale Netz an Zwift weiter. Der Weg lässt sich unter
+  *Sensoren* wählen.
 - **Kein Programm von Zwift**: Zwift unterstützt Linux nicht. Die Benutzung erfolgt auf eigene
   Gefahr.
-- **XP und Drops**: Zwift ist womöglich nicht glücklich darüber, dass eine Software-Bridge Daten
-  übermittelt, die sich manipulieren ließen. Einschränkungen bis hin zur Sperre des Kontos lassen
-  sich nicht ausschließen. Die Warnhinweise vom ersten Start stehen unter *Über Tretlager*.
+- **XP und Drops**: Mit der Sensor-Bridge ist Zwift womöglich nicht glücklich darüber, dass eine
+  Software Daten übermittelt, die sich manipulieren ließen. Einschränkungen bis hin zur Sperre des
+  Kontos lassen sich nicht ausschließen. Mit der Companion App liefert Zwifts eigene App die
+  Werte, der Hinweis entfällt dann. Die Warnhinweise vom ersten Start stehen unter *Über Tretlager*.
 
 ## Fahren
 <!-- icon: media-playback-start -->
@@ -24,15 +28,26 @@ Pulsgurt.
   Softwareverwaltung bzw. `flatpak update`. Die zuletzt bewährte Wine-Version hebt Tretlager auf;
   läuft Zwift nach einem Update schlechter, in der Übersicht *Vorige Wine-Version nutzen* einschalten.
 - **Während der Fahrt**: Tretlager wartet minimiert und räumt nach dem Beenden auf.
-- **Nicht für Rennen**: Tretlager garantiert nicht, dass die Sensor-Bridge Leistung,
-  Trittfrequenz und Puls korrekt an Zwift weitergibt. An Rennen und Wettbewerben mit Wertung daher
-  nicht mit Tretlager teilnehmen.
+- **Nicht für Rennen mit der Sensor-Bridge**: Tretlager garantiert nicht, dass die Sensor-Bridge
+  Leistung, Trittfrequenz und Puls korrekt an Zwift weitergibt. An Rennen und Wettbewerben mit
+  Wertung daher nicht mit der Sensor-Bridge teilnehmen. Mit der Companion App laufen die Werte
+  nicht über Tretlager.
 - **Auf dem Notebook**: Netzteil vor dem Start anschließen und angeschlossen lassen. Ein Wechsel
   zwischen Netz und Akku kann den NVIDIA-Treiber zum Absturz bringen.
 
 ## Sensoren
 <!-- icon: network-bluetooth -->
 
+- **Zwei Wege**: Unter *Sensoren über* steht die Wahl zwischen der Sensor-Bridge von Tretlager
+  (dieser Rechner verbindet sich per Bluetooth) und der Zwift Companion App (das Smartphone
+  verbindet sich). Nur einen der beiden nutzen: Ein Sensor nimmt nur eine Verbindung zugleich an.
+  Die folgenden Punkte gelten für die Sensor-Bridge.
+- **Companion App**: Smartphone und Rechner müssen im selben lokalen Netz sein, ohne VPN; Zwift
+  auf dem Rechner verbindet sich mit dem Smartphone, das Netz muss die beiden also zueinander
+  durchlassen. App öffnen, mit demselben Zwift-Konto anmelden und Zwift starten; sobald die App
+  meldet, dass sie verbunden ist, die Sensoren im Kopplungsbildschirm von Zwift auswählen. Bleibt die
+  Liste dort leer, den Filter von *Recommended* auf *All* umschalten. Die
+  Sensor-Bridge von Tretlager bleibt aus, und dieser Rechner braucht kein Bluetooth.
 - **In Tretlager koppeln**: Unter *Sensoren* suchen und hinzufügen. Vorher kurz in die Pedale
   treten; ein Pulsgurt sendet nur mit Hautkontakt.
 - **In Zwift koppeln**: Einmalig unter *Gekoppelte Geräte* „Wahoo KICKR …“ für Leistung,
@@ -124,6 +139,8 @@ Anmeldeseite von Zwift deshalb in einem eigenen Fenster. **Zwift erlaubt das nic
   stellen oder einen USB-Bluetooth-Stick mit Verlängerung neben den Trainer legen.
 - [network-bluetooth] **Zwift findet die Sensoren nicht**: Unter *Sensoren* prüfen, ob die Bridge
   läuft und die Sensoren verbunden sind; ohne laufendes Avahi (`avahi-daemon`) findet Zwift sie nicht.
+  Mit der Companion App: Smartphone und Rechner im selben Netz, kein VPN, App geöffnet, mit
+  demselben Konto angemeldet und mit Bluetooth-Berechtigung (Android: *Geräte in der Nähe*); dann die App neu starten, während Zwift läuft.
 - [battery-low] **Zwift hängt nach dem Ab- oder Anstecken des Netzteils**: Mit Alt+F4 beenden und
   mit Netzteil neu starten; hilft das nicht, den Rechner neu starten.
 - [video-display] **Bild unscharf unter Plasma**: *Systemeinstellungen* → *Anzeige* →

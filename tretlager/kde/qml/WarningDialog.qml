@@ -3,6 +3,8 @@ import QtQuick.Layouts
 import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
 
+// The two notes on the sensor bridge only concern rides with the bridge; with the Companion app
+// Zwift's own app delivers the values (chosen later under Sensors, so the dialog names both).
 // Warnings on first start (and again when their text changes: DISCLAIMER_VERSION in
 // app.py). Nothing continues without confirmation; "Quit" closes Tretlager. Later available
 // under "About Tretlager".
@@ -20,10 +22,12 @@ Kirigami.Dialog {
     readonly property var points: [
         [i18n("Not an official Zwift app"),
          i18n("Tretlager is a private project. Zwift does not support Linux and has nothing to do with Tretlager; report problems to Tretlager, not to Zwift.")],
-        [i18n("At your own risk"),
+        [i18n("Sensor bridge: at your own risk"),
          i18n("Zwift may not be happy that a software bridge sends data to Zwift that could be manipulated. Restrictions up to a suspended account cannot be ruled out – including the XP and drops earned with so much sweat.")],
-        [i18n("Not for races"),
-         i18n("Tretlager does not guarantee that the sensor bridge passes power, cadence and heart rate to Zwift correctly. Do not use Tretlager for races or competitions with results.")],
+        [i18n("Sensor bridge: not for races"),
+         i18n("Tretlager does not guarantee that the sensor bridge passes power, cadence and heart rate to Zwift correctly. Do not use the sensor bridge for races or competitions with results.")],
+        [i18n("Companion app instead of the bridge"),
+         i18n("If the Zwift Companion app on the phone connects the trainer and heart rate strap instead, Zwift's own app delivers power, cadence and heart rate. The two notes on the sensor bridge then do not apply.")],
         [i18n("Sign-in outside the launcher"),
          i18n("The official sign-in does not work on Linux. Tretlager's own sign-in window contradicts Zwift's terms of service.")]
     ]

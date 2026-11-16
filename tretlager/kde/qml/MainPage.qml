@@ -23,10 +23,13 @@ ColumnsPage {
     // Readiness at a glance: which enabled sensors are connected?
     readonly property var activeDevices: se.devices.filter(function (d) { return d.enabled })
     readonly property var waitingDevices: activeDevices.filter(function (d) { return d.state !== "connected" })
-    readonly property bool sensorsReady: se.running && waitingDevices.length === 0
+    readonly property bool companion: se.companion
+    readonly property bool sensorsReady: companion || (se.running && waitingDevices.length === 0)
     readonly property var audioOthers: se.running && waitingDevices.length > 0
                                        ? (se.otherDevices || []).filter(function (o) { return o.audio }) : []
     readonly property string readinessText: {
+        if (companion)
+            return i18n("Sensors come through the Zwift Companion app. Open it on the phone, on the same network as this computer.")
         if (!se.running)
             return i18n("The sensor bridge is starting …")
         if (activeDevices.length === 0)
@@ -143,7 +146,7 @@ ColumnsPage {
                 Layout.preferredWidth: Layout.preferredHeight
             }
             Kirigami.ContextualHelpButton {
-                toolTipText: i18n("Before starting, Tretlager checks the sensor bridge and renews the Zwift session. After a Tretlager update it adapts the Zwift environment, and it installs a new Zwift version through the Zwift launcher. Zwift runs on the most powerful graphics card and at the screen's resolution.")
+                toolTipText: i18n("Before starting, Tretlager checks the sensors' route to Zwift and renews the Zwift session. After a Tretlager update it adapts the Zwift environment, and it installs a new Zwift version through the Zwift launcher. Zwift runs on the most powerful graphics card and at the screen's resolution.")
             }
         }
         // Progress of long steps (Zwift update, reinstalling), invisible otherwise
@@ -155,14 +158,17 @@ ColumnsPage {
             to: 100
             value: page.la.percent
         }
-        // Disclaimer right next to the main action: the bridge values are not guaranteed.
+        // Disclaimer right next to the main action: the bridge values are not guaranteed. With the
+        // Companion app Tretlager is not in the path of the values, so that part does not apply.
         Controls.Label {
             Layout.fillWidth: true
             Layout.topMargin: Kirigami.Units.smallSpacing
             wrapMode: Text.WordWrap
             color: Kirigami.Theme.disabledTextColor
             font: Kirigami.Theme.smallFont
-            text: i18n("Not an official Zwift app, use at your own risk. Not for races: Tretlager does not guarantee that the sensor bridge passes power, cadence and heart rate to Zwift correctly.")
+            text: page.companion
+                ? i18n("Not an official Zwift app, use at your own risk. Power, cadence and heart rate reach Zwift through the Zwift Companion app, not through Tretlager.")
+                : i18n("Not an official Zwift app, use at your own risk. Not for races: Tretlager does not guarantee that the sensor bridge passes power, cadence and heart rate to Zwift correctly.")
         }
     }
 
@@ -172,13 +178,21 @@ ColumnsPage {
             title: i18n("Sensors")
             maximumWidth: Infinity
             trailing: Kirigami.ContextualHelpButton {
-                toolTipText: i18n("Zwift cannot use Bluetooth on Linux. The sensor bridge connects to the trainer and heart rate strap and offers them to Zwift as Wahoo devices with “Direct Connect”. Select them once in Zwift under Paired Devices: “Wahoo KICKR …” for power, cadence and resistance, “Wahoo HRM …” for heart rate.")
+                toolTipText: page.companion
+                    ? i18n("Zwift cannot use Bluetooth on Linux. The Zwift Companion app on the phone connects to the trainer and heart rate strap and passes them to Zwift over the local network. Tretlager's sensor bridge stays off.")
+                    : i18n("Zwift cannot use Bluetooth on Linux. The sensor bridge connects to the trainer and heart rate strap and offers them to Zwift as Wahoo devices with “Direct Connect”. Select them once in Zwift under Paired Devices: “Wahoo KICKR …” for power, cadence and resistance, “Wahoo HRM …” for heart rate.")
             }
         },
         FormCard.FormCard {
             maximumWidth: Infinity
             FormCard.FormPlaceholderMessageDelegate {
-                visible: !page.se.running || page.se.devices.length === 0
+                visible: page.companion
+                icon.name: "smartphone"
+                text: i18n("Zwift Companion app")
+                explanation: i18n("The phone holds the sensors. Pair them in Zwift through the Companion app.")
+            }
+            FormCard.FormPlaceholderMessageDelegate {
+                visible: !page.companion && (!page.se.running || page.se.devices.length === 0)
                 icon.name: "network-bluetooth"
                 text: !page.se.running ? i18n("Sensor bridge is off") : i18n("No devices set up")
                 explanation: !page.se.running ? i18n("It starts with Tretlager and before every ride.")

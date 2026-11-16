@@ -24,7 +24,7 @@ Rating per area: **officially supported** · **works** (reported several times) 
 | BLE via own bridge (DIRCON) | **works** (Zwift side), bridge **experimental** | Zwift detects Wahoo “Direct Connect” devices on the LAN even under Wine; a BlueZ → DIRCON bridge carries FTMS including ERG, power and cadence |
 | ANT+ in Wine | **does not work** | `winusb.dll` in Wine is almost entirely stubs; ANT+ could at most work natively in the bridge |
 | Updates | **works** with caveats | Launcher `SilentLaunch` updates; the version file `Zwift_ver_cur.xml` has checksums |
-| Companion app needed? | **no**, with the bridge | The bridge replaces Companion as the path for sensors |
+| Companion app needed? | **no**, with the bridge | The bridge replaces Companion as the path for sensors; since 2026-11-16 Companion is offered as an alternative (Zwift under Wine connects to the phone on TCP 21588) |
 
 **Conclusion:** The project is feasible, but not in the way the brief assumes.
 1. The sensors do not reach Zwift directly through Wine. Without the Companion app, the only

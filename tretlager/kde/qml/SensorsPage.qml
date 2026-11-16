@@ -11,6 +11,8 @@ ColumnsPage {
 
     property bool wizard: applicationWindow().inWizard
     readonly property var se: backend.sensors
+    // Sensors through the Zwift Companion app on the phone: the bridge and everything about it is hidden
+    readonly property bool companion: se.companion
     readonly property var unstable: se.devices.filter(function (d) { return d.unstable && !d.compat })
     // Headphones and the like on the same adapter, while a sensor is still waiting
     readonly property var others: se.running && se.devices.some(function (d) { return d.enabled && d.state !== "connected" })
@@ -27,7 +29,8 @@ ColumnsPage {
     header: WizardHeader {
         visible: page.wizard
         stepId: "sensors"
-        text: i18n("Pedal briefly and put on the heart rate strap.")
+        text: page.companion ? i18n("Have the phone with the Zwift Companion app at hand.")
+                             : i18n("Pedal briefly and put on the heart rate strap.")
     }
 
     // --- Messages ---
@@ -59,13 +62,52 @@ ColumnsPage {
 
     // --- Search at the top, paired sensors below ---
     leftCards: [
+        // --- Companion app: nothing to pair here, only the steps on the phone and in Zwift ---
         FormCard.FormHeader {
+            visible: page.companion
+            title: i18n("Pairing through the Companion app")
+            trailing: Kirigami.ContextualHelpButton {
+                toolTipText: i18n("The Zwift Companion app connects to the trainer and heart rate strap through the phone's Bluetooth and passes them to Zwift over the local network. This computer needs no Bluetooth for it, and Tretlager's sensor bridge stays off.")
+            }
+        },
+        FormCard.FormCard {
+            visible: page.companion
+            Repeater {
+                model: [
+                    [i18n("1. Same network"), "network-wireless",
+                     i18n("Phone and computer must be on the same local network, without VPN and not on a guest network. Zwift on this computer connects to the phone, so the network must let the two reach each other.")],
+                    [i18n("2. Open the Companion app"), "smartphone",
+                     i18n("Sign in with the same Zwift account as here. The app needs the Bluetooth permission (Android: “Nearby devices”); without it Zwift searches and finds nothing. Leave the app open during the ride.")],
+                    [i18n("3. Start Zwift"), "media-playback-start",
+                     i18n("As soon as the Companion app reports that it is connected, Zwift's pairing screen searches for sensors through the phone. Select the trainer and heart rate strap there under their own names. If the list stays empty, switch the filter from “Recommended” to “All”.")],
+                    [i18n("Sensors do not appear in Zwift"), "help-hint",
+                     i18n("Pedal briefly and put on the strap, close other apps that hold the sensors, then restart the Companion app. Zwift and the app only connect while Zwift is running.")]
+                ]
+                delegate: ColumnLayout {
+                    required property var modelData
+                    required property int index
+                    Layout.fillWidth: true
+                    spacing: 0
+                    FormCard.FormDelegateSeparator { visible: index > 0 }
+                    FormCard.FormTextDelegate {
+                        Layout.fillWidth: true
+                        text: modelData[0]
+                        icon.name: modelData[1]
+                        description: modelData[2]
+                    }
+                }
+            }
+        },
+
+        FormCard.FormHeader {
+            visible: !page.companion
             title: i18n("Sensors nearby")
             trailing: Kirigami.ContextualHelpButton {
                 toolTipText: i18n("The search takes about ten seconds and finds smart trainers, power meters, cadence sensors and heart rate straps. Pedal briefly beforehand so the trainer wakes up; a heart rate strap only transmits with skin contact.")
             }
         },
         FormCard.FormCard {
+            visible: !page.companion
             FormCard.FormButtonDelegate {
                 text: page.se.scanning ? i18n("Searching…") : i18n("Search for sensors")
                 description: page.se.running ? "" : i18n("Turn on the sensor bridge for this.")
@@ -105,8 +147,9 @@ ColumnsPage {
             }
         },
 
-        FormCard.FormHeader { title: i18n("Paired sensors") },
+        FormCard.FormHeader { visible: !page.companion; title: i18n("Paired sensors") },
         FormCard.FormCard {
+            visible: !page.companion
             FormCard.FormPlaceholderMessageDelegate {
                 visible: page.se.devices.length === 0
                 icon.name: "network-bluetooth"
@@ -137,12 +180,38 @@ ColumnsPage {
     // --- Bridge ---
     rightCards: [
         FormCard.FormHeader {
-            title: i18n("Sensor bridge")
+            title: i18n("Sensors via")
             trailing: Kirigami.ContextualHelpButton {
-                toolTipText: i18n("Zwift cannot use Bluetooth on Linux. The sensor bridge connects to the trainer and heart rate strap and offers them to Zwift as Wahoo devices with “Direct Connect”; the Zwift Companion app is not needed.")
+                toolTipText: i18n("Zwift cannot use Bluetooth on Linux. Either Tretlager's sensor bridge on this computer connects to the trainer and heart rate strap, or the Zwift Companion app on the phone does. Use only one of the two: a sensor accepts one connection at a time.")
             }
         },
         FormCard.FormCard {
+            FormCard.FormRadioDelegate {
+                text: i18n("Tretlager sensor bridge")
+                description: i18n("This computer connects to the sensors through Bluetooth. No phone needed.")
+                checked: !page.companion
+                enabled: !backend.launchInfo.zwiftRunning
+                onToggled: if (checked) backend.setSensorSource("bridge")
+            }
+            FormCard.FormDelegateSeparator {}
+            FormCard.FormRadioDelegate {
+                text: i18n("Zwift Companion app")
+                description: i18n("The phone connects to the sensors and passes them to Zwift over the network. The values reach Zwift through Zwift's own app.")
+                checked: page.companion
+                enabled: !backend.launchInfo.zwiftRunning
+                onToggled: if (checked) backend.setSensorSource("companion")
+            }
+        },
+
+        FormCard.FormHeader {
+            visible: !page.companion
+            title: i18n("Sensor bridge")
+            trailing: Kirigami.ContextualHelpButton {
+                toolTipText: i18n("The sensor bridge connects to the trainer and heart rate strap and offers them to Zwift as Wahoo devices with “Direct Connect”.")
+            }
+        },
+        FormCard.FormCard {
+            visible: !page.companion
             FormCard.FormSwitchDelegate {
                 text: i18n("Sensor bridge")
                 description: page.se.running ? i18n("Running and offering the sensors to Zwift") : i18n("Off – Zwift sees no sensors")
@@ -196,8 +265,9 @@ ColumnsPage {
 
     // --- Help: across the full width, cases in two columns (even count) ---
     bottomCards: [
-        FormCard.FormHeader { title: i18n("Troubleshooting") },
+        FormCard.FormHeader { visible: !page.companion; title: i18n("Troubleshooting") },
         FormCard.FormCard {
+            visible: !page.companion
             GridLayout {
                 Layout.fillWidth: true
                 columns: page.wide ? 2 : 1
@@ -236,7 +306,7 @@ ColumnsPage {
         visible: page.wizard
         skipText: i18n("Skip")
         onSkip: applicationWindow().pageStack.push(Qt.resolvedUrl("FinishPage.qml"))
-        nextEnabled: page.se.devices.length > 0
+        nextEnabled: page.companion || page.se.devices.length > 0
         onNext: applicationWindow().pageStack.push(Qt.resolvedUrl("FinishPage.qml"))
     }
 }

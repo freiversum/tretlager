@@ -4,6 +4,27 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-11-16
+
+### Added
+- Sensors through the Zwift Companion app instead of the sensor bridge. Under *Sensors* → *Sensors
+  via* you choose who connects to trainer and heart rate strap: Tretlager's bridge on this computer
+  (as before, the default) or the Companion app on the phone. With the Companion app the bridge
+  stays off completely (not started with Tretlager, before a ride or at login), the system check
+  skips Bluetooth and device announcement, and the Sensors page, the overview and the last setup
+  step explain the steps on the phone instead. Before every start Tretlager sets Zwift's own switch
+  for this (`PREFER_NATIVE_BLE` in Zwift's `prefs.xml`): by default Zwift insists on the computer's
+  Bluetooth, which does not exist under Wine, and the pairing screen would search forever. Tested
+  on TUXEDO OS with Zwift 1.125 and the Companion app on Android: Zwift finds trainer and heart
+  rate strap through the phone.
+
+### Changed
+- Warnings reworded: the notes "at your own risk" (data that could be manipulated, XP and drops)
+  and "not for races" now name the sensor bridge, because they only concern rides with it. A new
+  note says that with the Companion app Zwift's own app delivers the values and the two do not
+  apply. The notes on the unofficial app and on the sign-in outside the launcher stay as they
+  are. Because the text changed, Tretlager asks for confirmation once more.
+
 ## [0.11.6] - 2026-11-13
 
 ### Fixed

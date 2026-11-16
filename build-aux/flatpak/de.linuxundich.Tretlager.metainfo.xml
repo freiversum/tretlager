@@ -25,6 +25,13 @@
   <url type="vcs-browser">https://github.com/linuxundich/tretlager</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="0.12.0" date="2026-11-16">
+      <description>
+        <p>The Zwift Companion app on your phone can now hold trainer and heart rate strap instead of
+        Tretlager's sensor bridge. Choose the route under Sensors. The warnings say which notes only
+        concern the bridge.</p>
+      </description>
+    </release>
     <release version="0.11.6" date="2026-11-13">
       <description>
         <p>Setting up Zwift no longer gets stuck after the .NET installation. The step could stand still

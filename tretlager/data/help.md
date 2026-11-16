@@ -7,11 +7,14 @@ rate strap.
 - **Zwift under Wine**: The official Zwift Windows client runs under Wine, which Tretlager brings
   along. Tretlager downloads Zwift from Zwift, verifies the signature and does not modify it.
 - **Sensor bridge**: Zwift cannot use Bluetooth under Wine. The bridge connects the trainer and
-  heart rate strap and offers them to Zwift as Wahoo devices; the Companion app is not needed.
+  heart rate strap and offers them to Zwift as Wahoo devices; no phone is needed.
+- **Or the Companion app**: Alternatively the Zwift Companion app on the phone connects the
+  sensors and passes them to Zwift over the local network. Choose the route under *Sensors*.
 - **Not a Zwift program**: Zwift does not support Linux. Use at your own risk.
-- **XP and drops**: Zwift may not be happy that a software bridge sends data that could be
-  manipulated. Restrictions up to a suspended account cannot be ruled out. The warnings from the
-  first start are under *About Tretlager*.
+- **XP and drops**: With the sensor bridge, Zwift may not be happy that software sends data that
+  could be manipulated. Restrictions up to a suspended account cannot be ruled out. With the
+  Companion app, Zwift's own app delivers the values and this note does not apply. The warnings
+  from the first start are under *About Tretlager*.
 
 ## Riding
 <!-- icon: media-playback-start -->
@@ -24,14 +27,24 @@ rate strap.
   centre or `flatpak update`. Tretlager keeps the last proven Wine version; if Zwift runs worse after
   an update, switch on *Use previous Wine version* in the overview.
 - **During the ride**: Tretlager waits minimised and tidies up after Zwift closes.
-- **Not for races**: Tretlager does not guarantee that the sensor bridge passes power, cadence
-  and heart rate to Zwift correctly. Do not use Tretlager for races or competitions with results.
+- **Not for races with the sensor bridge**: Tretlager does not guarantee that the sensor bridge
+  passes power, cadence and heart rate to Zwift correctly. Do not use the sensor bridge for races
+  or competitions with results. With the Companion app the values do not pass through Tretlager.
 - **On a laptop**: Connect the power adapter before starting and keep it connected. Switching
   between AC and battery can crash the NVIDIA driver.
 
 ## Sensors
 <!-- icon: network-bluetooth -->
 
+- **Two routes**: Under *Sensors via* choose between Tretlager's sensor bridge (this computer
+  connects through Bluetooth) and the Zwift Companion app (the phone connects). Use only one: a
+  sensor accepts one connection at a time. The following points apply to the sensor bridge.
+- **Companion app**: Phone and computer must be on the same local network, without VPN; Zwift
+  on the computer connects to the phone, so the network must let the two reach each other. Open
+  the app, sign in with the same Zwift account and start Zwift; once the app reports that it is
+  connected, select the sensors on Zwift's pairing screen. If the list stays empty there, switch
+  the filter from *Recommended* to *All*. Tretlager's
+  sensor bridge stays off, and this computer needs no Bluetooth.
 - **Pairing in Tretlager**: Search and add under *Sensors*. Pedal briefly beforehand; a heart
   rate strap only transmits with skin contact.
 - **Pairing in Zwift**: Once under *Paired Devices*, select “Wahoo KICKR …” for power, cadence
@@ -121,7 +134,8 @@ using it is at your own risk.**
   trainer or place a USB Bluetooth dongle on an extension cable next to the trainer.
 - [network-bluetooth] **Zwift does not find the sensors**: Check under *Sensors* that the bridge
   is running and the sensors are connected; without a running Avahi (`avahi-daemon`) Zwift will not
-  find them.
+  find them. With the Companion app: same network for phone and computer, no VPN, app open,
+  signed in with the same account and allowed to use Bluetooth (Android: *Nearby devices*); then restart the app while Zwift is running.
 - [battery-low] **Zwift hangs after plugging or unplugging the power adapter**: Close it with
   Alt+F4 and restart it with the power adapter connected; if that does not help, restart the
   computer.

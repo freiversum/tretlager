@@ -142,6 +142,7 @@ def system_report(screens: list[dict] | None = None) -> str:
     item("Zwift version", _safe(setup.game_version) or "–")
 
     section("Sensor bridge")
+    item("Sensors via", "Zwift Companion app" if _safe(bridgectl.companion, False) else "sensor bridge")
     status = _safe(bridgectl.status, None)
     lines.append(json.dumps(status, indent=2, ensure_ascii=False) if status else "not running")
 

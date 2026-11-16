@@ -27,7 +27,7 @@ except ImportError:  # python3-pyside6.qtwebenginequick not installed
 
 QML_DIR = Path(__file__).parent / "qml"
 # Revision of the warnings (WarningDialog.qml); increase it when their content changes
-DISCLAIMER_VERSION = 1
+DISCLAIMER_VERSION = 2
 POLL_VISIBLE_MS = 1500  # live sensor values while the window is visible
 POLL_HIDDEN_MS = 15000
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -380,7 +380,7 @@ class Backend(QObject):
                          "devices": [], "scanning": False,
                          "found": [], "scanned": False, "error": "",
                          "adapters": [], "adapter": "", "adapterHci": "", "adapterMissing": False,
-                         "otherDevices": []}
+                         "otherDevices": [], "companion": bridgectl.companion()}
         self._chip = btcompat.adapter_chip()
         self._sensorsEvent.connect(self._on_sensors_event)
         self._poll = QTimer(self)
@@ -427,8 +427,13 @@ class Backend(QObject):
 
         def work():
             try:
+                if bridgectl.companion():
+                    # No bridge, nothing to poll: the phone holds the sensors.
+                    self._sensorsEvent.emit({"companion": True, "running": False, "devices": [],
+                                             "otherDevices": [], "adapterMissing": False})
+                    return
                 st = bridgectl.status()
-                ev = {}
+                ev = {"companion": False}
                 # Refresh the adapter list less often (one busctl call per adapter).
                 if time.monotonic() - self._adapters_at > 10:
                     self._adapters_at = time.monotonic()
@@ -445,6 +450,22 @@ class Backend(QObject):
                     "network": not (st or {}).get("local_only", True)}))
             finally:
                 self._poll_busy = False
+        self._bg(work)
+
+    @Slot(str)
+    def setSensorSource(self, source: str) -> None:
+        """Route of the sensors to Zwift: "bridge" (Tretlager) or "companion" (Zwift Companion app
+        on the phone). Not during a ride: Zwift would lose its devices."""
+        if self._launch.get("zwiftRunning"):
+            return
+        companion = source == bridgectl.SOURCE_COMPANION
+        self._on_sensors_event({"companion": companion, "error": "", "found": [], "scanned": False})
+
+        def work():
+            bridgectl.set_source(source)
+            if not companion and not bridgectl.is_running():
+                bridgectl.set_running(True)
+            self.refreshSensors()
         self._bg(work)
 
     @Slot(bool)
@@ -564,6 +585,9 @@ class Backend(QObject):
     def prewarmBridge(self) -> None:
         """Start the bridge on opening already, so trainer and strap are connected when you get on."""
         def work():
+            if not bridgectl.wanted():
+                self.refreshSensors()
+                return
             if not self._launch.get("zwiftRunning") and bridgectl.restart_if_outdated(__version__):
                 self._launchEvent.emit({"logline": _("Sensor bridge restarted after an update")})
             if bridgectl.unit_installed() and not bridgectl.is_running():

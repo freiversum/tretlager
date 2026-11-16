@@ -9,7 +9,8 @@
 <p align="center">
   Tretlager installs the official Windows version of Zwift on your Linux computer, signs you in and
   connects your smart trainer and heart rate strap over Bluetooth. No terminal, no Wine tinkering,
-  no Companion app on your phone. One button starts the ride.
+  no phone needed. If you prefer, the Zwift Companion app can hold the sensors instead. One button
+  starts the ride.
 </p>
 
 <p align="center">
@@ -28,12 +29,18 @@
 
 > [!WARNING]
 > **Not an official Zwift app, use at your own risk.** Tretlager is a private project. Zwift does not
-> support Linux and has nothing to do with Tretlager. Zwift may not be happy that a software bridge
-> sends data to Zwift that could be manipulated; restrictions up to a suspended account, including
-> the XP and drops you earned, cannot be ruled out. **Not for races:** there is no guarantee that
-> the bridge passes power, cadence and heart rate to Zwift correctly. The sign-in happens outside
-> the Zwift launcher, which contradicts Zwift's terms of service. Tretlager shows these points
-> before the first start and only goes on once you accept them.
+> support Linux and has nothing to do with Tretlager. The sign-in happens outside the Zwift
+> launcher, which contradicts Zwift's terms of service.
+>
+> **With the sensor bridge:** Zwift may not be happy that a software bridge sends data to Zwift
+> that could be manipulated; restrictions up to a suspended account, including the XP and drops
+> you earned, cannot be ruled out. **Not for races:** there is no guarantee that the bridge passes
+> power, cadence and heart rate to Zwift correctly.
+>
+> **With the Zwift Companion app** instead of the bridge, Zwift's own app delivers power, cadence
+> and heart rate, and the two notes on the bridge do not apply.
+>
+> Tretlager shows these points before the first start and only goes on once you accept them.
 
 ## Why Linux, why now
 
@@ -93,6 +100,13 @@ Tretlager sensor bridge connects to your smart trainer and heart rate strap over
 offers them to Zwift on the same computer, the way a Wahoo trainer with Direct Connect would. In
 Zwift you simply pick "Wahoo KICKR …" and "Wahoo HRM …". ERG mode and climbs work, the trainer
 gets harder when the road goes up.
+
+### Or through the Zwift Companion app
+
+If you would rather keep Tretlager out of the path of your power data, choose *Zwift Companion
+app* under *Sensors*. The phone then connects to trainer and heart rate strap, and Zwift fetches
+them from the app over your local network, exactly as on Windows. The sensor bridge stays off and
+the computer needs no Bluetooth at all. Phone and computer have to be on the same network.
 
 <p align="center">
   <img src="docs/screenshots/tretlager-sensors.webp" alt="Sensors page: nearby trainers and straps, paired sensors with live values, bridge settings and troubleshooting" width="80%">

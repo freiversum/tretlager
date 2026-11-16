@@ -17,7 +17,7 @@ import subprocess
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
-from . import btcompat, dbusutil, paths, wine
+from . import bridgectl, btcompat, dbusutil, paths, wine
 from ..i18n import _
 
 OK, WARN, FAIL = "ok", "warn", "fail"
@@ -309,10 +309,16 @@ def check_avahi(run=subprocess.run) -> Check:
                    "the avahi package and start the avahi-daemon service."))
 
 
-def run_all() -> list[Check]:
+def run_all(companion: bool | None = None) -> list[Check]:
+    """All checks. With the Companion app as the route of the sensors, this computer needs neither
+    Bluetooth nor Avahi; those two checks are left out."""
+    if companion is None:
+        companion = bridgectl.companion()
     checks = [check_system()]
     checks += check_graphics()
-    checks += [check_bluetooth(), check_avahi(), check_disk(), check_network(), check_wine(), check_existing()]
+    if not companion:
+        checks += [check_bluetooth(), check_avahi()]
+    checks += [check_disk(), check_network(), check_wine(), check_existing()]
     return checks
 
 

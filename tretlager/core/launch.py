@@ -18,7 +18,7 @@ import time
 from pathlib import Path
 from typing import Callable
 
-from . import bridgectl, debug, display, gnomealive, login, paths, setup, state, wine, x11window
+from . import bridgectl, debug, display, gnomealive, login, paths, setup, state, wine, x11window, zwiftprefs
 from .manifest import UpdateProgress, remote_version  # noqa: F401 (also for callers of launch)
 from ..i18n import _, ngettext
 
@@ -214,8 +214,10 @@ class Launcher:
         return self.ctx.wine_env
 
     def run(self) -> None:
-        self.progress(_("Checking the sensor bridge"))
+        if bridgectl.wanted():
+            self.progress(_("Checking the sensor bridge"))
         self.ensure_bridge()
+        self.ensure_sensor_route()
         self.progress(_("Checking the sign-in"))
         token = login.valid_token()
         if token is None:
@@ -233,12 +235,28 @@ class Launcher:
         self.progress(_("Zwift is running"))
 
     def ensure_bridge(self) -> None:
+        if not bridgectl.wanted():
+            # Two sources for the same trainer would get in each other's way.
+            if bridgectl.is_running():
+                bridgectl.set_running(False)
+            self.log(_("Sensors come through the Zwift Companion app, the sensor bridge stays off"))
+            return
         if not bridgectl.unit_installed():
             self.log(_("Sensor bridge not installed, starting without sensors"))
             return
         if not bridgectl.is_running():
             bridgectl.set_running(True)
             self.log(_("Sensor bridge started"))
+
+    def ensure_sensor_route(self) -> None:
+        """Zwift only asks the Companion app for sensors if its settings say so (core/zwiftprefs.py);
+        back with the bridge, Zwift's default is restored."""
+        try:
+            if zwiftprefs.set_prefer_native_ble(not bridgectl.companion()):
+                self.log(_("Zwift set to search for sensors through the Companion app") if bridgectl.companion()
+                         else _("Zwift set back to its own Bluetooth search"))
+        except OSError as e:
+            self.log(_("Could not adjust Zwift's sensor setting: {error}").format(error=e))
 
     def reconcile(self) -> None:
         """Reconcile the setup with this Tretlager (docs/updates.md).

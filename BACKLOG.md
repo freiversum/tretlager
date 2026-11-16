@@ -232,8 +232,16 @@ Implementation in milestones (core Python `tretlager/core`, UI PySide6 + Kirigam
 
 ## Next features (2026-10-31)
 
-- [ ] **Use the Companion app instead of the bridge.** Option to switch off the sensor bridge completely
+- [x] **Use the Companion app instead of the bridge.** Option to switch off the sensor bridge completely
   and pair trainer and heart rate strap through the Zwift Companion app on the phone instead.
+  Done 2026-11-16 in 0.12.0 (*Sensors* → *Sensors via*, state `sensors.source`). Finding on tinytin with the
+  Pixel 10: no mDNS needed, Zwift under Wine dials the phone itself (`Auxiliary Controller
+  attempting to connect to phone at <ip>:21588`). That alone is not enough: with Zwift's default
+  `PREFER_NATIVE_BLE=1` the pairing screen never asks the phone. With 0 (set by Tretlager before the
+  start, `core/zwiftprefs.py`) Zwift logs `Starting ZC scan` and lists KICKR and HRM-Pro as `BLE (ZC)`.
+  The Companion app needs its Bluetooth permissions on the phone (they were missing on the Pixel).
+- [ ] Companion app: a full ride with trainer and heart rate strap paired through the phone (ERG,
+  gradient, heart rate); so far tested up to Zwift finding both sensors through the phone.
   - Setting in Sensors (or Overview): “Sensors via: Tretlager bridge / Companion app”
   - With Companion: never start the bridge (no D-Bus activation, no autostart, no DIRCON announcement),
     skip the Bluetooth checks in the system check, adapt start page and help (phone and PC in the same network)

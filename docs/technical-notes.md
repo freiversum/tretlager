@@ -18,6 +18,16 @@ Direct Connect, without the Companion app. Feasibility in [FEASIBILITY.md](../FE
 UX concept in [docs/ux-concept.md](ux-concept.md), QA audit in
 [docs/qa-audit-2026-10-30.md](qa-audit-2026-10-30.md), open items in [BACKLOG.md](../BACKLOG.md).
 
+**Sensors through the Companion app (2026-11-16):** as an alternative to the bridge, *Sensors via*
+switches to the Zwift Companion app (`bridgectl.set_source`, state `sensors.source`). The bridge is
+then never started (`bridgectl.wanted()` guards the start with Tretlager and before a ride, start
+at login is switched off) and the system check leaves out Bluetooth and Avahi. Zwift learns the
+phone's address from its servers and connects to it on TCP 21588 (`Auxiliary Controller` in
+Zwift's `Log.txt`); nothing has to be opened on the computer. Zwift only asks the phone for
+sensors with `<PREFER_NATIVE_BLE>0</PREFER_NATIVE_BLE>` in its `prefs.xml`; the launcher sets that
+before every start in Companion mode and restores 1 with the bridge (`core/zwiftprefs.py`). The warnings about manipulable data
+and races only concern the bridge.
+
 **Not an official Zwift app, use at your own risk:** Zwift may not be happy that a software
 bridge sends data to Zwift that could be manipulated. Restrictions up to a suspended account
 cannot be ruled out – including the XP and drops you worked hard for. **Not for races:** there

@@ -26,7 +26,7 @@ ColumnsPage {
             FormCard.FormDelegateSeparator {}
             FormCard.FormTextDelegate {
                 text: i18n("Smart trainer and heart rate strap with Bluetooth")
-                description: i18n("Only needed at step %1", applicationWindow().stepIds.indexOf("sensors") + 1)
+                description: i18n("Only needed at step %1. Connected by this computer or by the Zwift Companion app on the phone.", applicationWindow().stepIds.indexOf("sensors") + 1)
                 icon.name: "network-bluetooth"
             }
         }
@@ -42,15 +42,21 @@ ColumnsPage {
             }
             FormCard.FormDelegateSeparator {}
             FormCard.FormTextDelegate {
-                text: i18n("At your own risk")
+                text: i18n("Sensor bridge: at your own risk")
                 description: i18n("Zwift may not be happy that a software bridge sends data to Zwift that could be manipulated. Restrictions up to a suspended account cannot be ruled out – including the XP and drops earned with so much sweat.")
                 icon.name: "emblem-warning"
             }
             FormCard.FormDelegateSeparator {}
             FormCard.FormTextDelegate {
-                text: i18n("Not for races")
-                description: i18n("Tretlager does not guarantee that the sensor bridge passes power, cadence and heart rate to Zwift correctly. Do not use Tretlager for races or competitions with results.")
+                text: i18n("Sensor bridge: not for races")
+                description: i18n("Tretlager does not guarantee that the sensor bridge passes power, cadence and heart rate to Zwift correctly. Do not use the sensor bridge for races or competitions with results.")
                 icon.name: "flag"
+            }
+            FormCard.FormDelegateSeparator {}
+            FormCard.FormTextDelegate {
+                text: i18n("Companion app instead of the bridge")
+                description: i18n("If the Zwift Companion app on the phone connects the trainer and heart rate strap instead, Zwift's own app delivers power, cadence and heart rate. The two notes on the sensor bridge then do not apply.")
+                icon.name: "smartphone"
             }
             FormCard.FormDelegateSeparator {}
             FormCard.FormButtonDelegate {

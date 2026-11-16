@@ -23,6 +23,9 @@ from ..i18n import _
 from . import applog, state
 
 IN_FLATPAK = Path("/.flatpak-info").exists()
+# Route of the sensors to Zwift: Tretlager's bridge (default) or the Zwift Companion app on the phone
+SOURCE_BRIDGE = "bridge"
+SOURCE_COMPANION = "companion"
 DBUS = ["--dest", "org.freedesktop.DBus", "--object-path", "/org/freedesktop/DBus", "--method"]
 
 
@@ -159,6 +162,29 @@ def restart_if_outdated(version: str, run=subprocess.run, sleep=None) -> bool:
         (sleep or time.sleep)(0.2)
     set_running(True, run)
     return True
+
+
+def companion() -> bool:
+    """Sensors come through the Zwift Companion app on the phone instead of the bridge?"""
+    return state.load().get("sensors", {}).get("source") == SOURCE_COMPANION
+
+
+def set_source(source: str, run=subprocess.run) -> None:
+    """Choose the route of the sensors to Zwift. With the Companion app the bridge is switched off
+    completely: stopped now, no start at login, and nothing starts it again (see `wanted`)."""
+    if source not in (SOURCE_BRIDGE, SOURCE_COMPANION):
+        raise ValueError(source)
+    state.update("sensors", source=source)
+    applog.info("Sensors via %s", source)
+    if source == SOURCE_COMPANION:
+        if autostart(run):
+            set_autostart(False, run)
+        set_running(False, run)
+
+
+def wanted() -> bool:
+    """May the bridge be started? Not while the sensors come through the Companion app."""
+    return not companion()
 
 
 def autostart(run=subprocess.run) -> bool:

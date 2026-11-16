@@ -17,8 +17,11 @@ ColumnsPage {
         text: i18n("From now on Zwift starts with one click, from the overview or from the application menu under Zwift (Tretlager).")
     }
 
+    readonly property bool companion: backend.sensors.companion
+
     FormCard.FormHeader { title: i18n("Once in Zwift: Paired Devices") }
     FormCard.FormCard {
+        visible: !companion
         FormCard.FormTextDelegate {
             text: i18n("Power, cadence and resistance")
             description: i18n("Select “Wahoo KICKR …”")
@@ -34,6 +37,26 @@ ColumnsPage {
         FormCard.FormTextDelegate {
             text: i18n("Notices about Bluetooth and ANT+")
             description: i18n("Zwift reports both as unavailable. That is normal; the devices come through the sensor bridge.")
+            icon.name: "dialog-information"
+        }
+    }
+    FormCard.FormCard {
+        visible: companion
+        FormCard.FormTextDelegate {
+            text: i18n("Open the Companion app first")
+            description: i18n("On the phone, on the same network as this computer and signed in with the same Zwift account.")
+            icon.name: "smartphone"
+        }
+        FormCard.FormDelegateSeparator {}
+        FormCard.FormTextDelegate {
+            text: i18n("Trainer and heart rate strap")
+            description: i18n("Select them under their own names; Zwift reaches them through the Companion app.")
+            icon.source: Qt.resolvedUrl("../../data/icons/tretlager-trainer-symbolic.svg")
+        }
+        FormCard.FormDelegateSeparator {}
+        FormCard.FormTextDelegate {
+            text: i18n("Notices about Bluetooth and ANT+")
+            description: i18n("Until the Companion app is connected, Zwift shows warning signs for both. That is normal; the devices come through the phone.")
             icon.name: "dialog-information"
         }
     }

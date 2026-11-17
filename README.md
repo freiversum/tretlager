@@ -42,16 +42,11 @@
 >
 > Tretlager shows these points before the first start and only goes on once you accept them.
 
-## Why Linux, why now
-
-Windows 10 no longer gets updates, and plenty of the computers that only ever run Zwift cannot
-officially run Windows 11. Zwift has already dropped support for Windows 8, and Windows 10 will
-probably follow at some point. Then it is either upgrading the hardware or switching to Linux. That
-is where Tretlager comes in: the old computer can stay, only the system underneath changes.
-
 ## See it in action
 
-<a href="docs/tretlager-demo.mp4"><img src="docs/screenshots/demo-poster.webp" width="420" align="right" alt="Play the Tretlager demo video"/></a>
+<table>
+<tr>
+<td valign="middle">
 
 From the first start to the finish line: Tretlager checks the system, installs Wine and Zwift by
 itself, signs in, pairs a trainer and a heart rate strap and starts Zwift on the NVIDIA graphics
@@ -60,9 +55,18 @@ card. Zwift then finds the sensors through the bridge, and Tretlager keeps watch
 [**Watch the demo**](docs/tretlager-demo.mp4) (3:43, MP4, 43 MB). The rider data in the video is
 simulated, everything else is real.
 
-<br clear="right"/>
+</td>
+<td width="55%">
+<a href="docs/tretlager-demo.mp4"><img src="docs/screenshots/demo-poster.webp" width="100%" alt="Play the Tretlager demo video"/></a>
+</td>
+</tr>
+</table>
 
 ## What it does
+
+<table>
+<tr>
+<td width="33%" valign="top">
 
 ### A setup assistant instead of a wiki page
 
@@ -70,10 +74,8 @@ Getting Zwift to run under Wine usually means a long list of commands, .NET inst
 registry tweaks. Tretlager turns that into a guided setup. It checks graphics, Bluetooth, disk
 space and network first, without changing anything, and tells you what is missing.
 
-<p align="center">
-  <img src="docs/screenshots/tretlager-welcome.webp" alt="Welcome page with requirements and the important notes" width="49%">
-  <img src="docs/screenshots/tretlager-system-check.webp" alt="System check: system, graphics, hybrid graphics, Bluetooth, Avahi, disk space, internet, Wine and Zwift" width="49%">
-</p>
+</td>
+<td width="33%" valign="top">
 
 ### Installs Zwift by itself
 
@@ -82,16 +84,33 @@ verifies its signature and sets up fonts, .NET 4.8 and WebView2. Then the Zwift 
 the 5 GB game. Tretlager shows the progress and needs about 15 minutes on a normal connection.
 Zwift's own files stay untouched.
 
-<p align="center">
-  <img src="docs/screenshots/tretlager-setup.webp" alt="Setup page: installer verified, Wine environment, Microsoft components and launcher done, game download in progress" width="80%">
-</p>
+</td>
+<td width="33%" valign="top">
 
 ### Signs you in
 
 The sign-in page of the Zwift launcher does not work under Wine. Tretlager opens Zwift's own
 sign-in page in a private window instead and keeps the session in your desktop's keyring
-(KWallet or GNOME Keyring). You type your password into Zwift's page, never into Tretlager. This
-step is optional and only happens after you agree.
+(KWallet or GNOME Keyring). You type your password into Zwift's page, never into Tretlager. This step is optional and only happens after
+you agree.
+
+</td>
+</tr>
+</table>
+
+<p align="center">
+  <img src="docs/screenshots/tretlager-welcome.webp" alt="Welcome page with requirements and the important notes" width="32%">
+  <img src="docs/screenshots/tretlager-system-check.webp" alt="System check: system, graphics, hybrid graphics, Bluetooth, Avahi, disk space, internet, Wine and Zwift" width="32%">
+  <img src="docs/screenshots/tretlager-setup.webp" alt="Setup page: installer verified, Wine environment, Microsoft components and launcher done, game download in progress" width="32%">
+</p>
+
+<table>
+<tr>
+<td width="55%">
+<img src="docs/screenshots/tretlager-sensors.webp" alt="Sensors page: nearby trainers and straps, paired sensors with live values, bridge settings and troubleshooting" width="100%">
+<img src="docs/screenshots/zwift-paired-devices.webp" alt="Zwift's Paired Devices screen with power, resistance, cadence and heart rate all connected through the bridge" width="100%">
+</td>
+<td valign="middle">
 
 ### Your sensors, without a phone
 
@@ -101,6 +120,9 @@ offers them to Zwift on the same computer, the way a Wahoo trainer with Direct C
 Zwift you simply pick "Wahoo KICKR …" and "Wahoo HRM …". ERG mode and climbs work, the trainer
 gets harder when the road goes up.
 
+Pause a sensor you don't need today, pick a USB Bluetooth adapter if the built-in chip is
+unreliable, or let the bridge serve Zwift on another device in your network.
+
 ### Or through the Zwift Companion app
 
 If you would rather keep Tretlager out of the path of your power data, choose *Zwift Companion
@@ -108,28 +130,35 @@ app* under *Sensors*. The phone then connects to trainer and heart rate strap, a
 them from the app over your local network, exactly as on Windows. The sensor bridge stays off and
 the computer needs no Bluetooth at all. Phone and computer have to be on the same network.
 
-<p align="center">
-  <img src="docs/screenshots/tretlager-sensors.webp" alt="Sensors page: nearby trainers and straps, paired sensors with live values, bridge settings and troubleshooting" width="80%">
-</p>
+</td>
+</tr>
+</table>
 
-<p align="center">
-  <img src="docs/screenshots/zwift-paired-devices.webp" alt="Zwift's Paired Devices screen with power, resistance, cadence and heart rate all connected through the bridge" width="80%">
-</p>
-
-Pause a sensor you don't need today, pick a USB Bluetooth adapter if the built-in chip is
-unreliable, or let the bridge serve Zwift on another device in your network.
+<table>
+<tr>
+<td valign="middle">
 
 ### One button to ride
 
 The overview shows your sensors, the Zwift version, the graphics card, Wine and the sign-in at a
-glance. "Start Zwift" runs the game on the dedicated NVIDIA card of a hybrid laptop and keeps the screen resolution; on Plasma it also maximises
-the window. Tretlager waits in the background, shows live values and tidies
-up after the ride. A menu entry "Zwift (Tretlager)" starts the ride directly from the
-application launcher.
+glance. "Start Zwift" runs the game on the dedicated NVIDIA card of a hybrid laptop and keeps the
+screen resolution; on Plasma it also maximises the window. Tretlager waits in the background,
+shows live values and tidies up after the ride. A menu entry "Zwift (Tretlager)" starts the ride
+directly from the application launcher.
 
-<p align="center">
-  <img src="docs/screenshots/tretlager-ready.webp" alt="Overview before the ride: ready to ride, both sensors connected, Zwift up to date, NVIDIA GeForce RTX 3050 Ti" width="80%">
-</p>
+</td>
+<td width="55%">
+<img src="docs/screenshots/tretlager-ready.webp" alt="Overview before the ride: ready to ride, both sensors connected, Zwift up to date, NVIDIA GeForce RTX 3050 Ti" width="100%">
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="55%">
+<img src="docs/screenshots/tretlager-warning.webp" alt="The warning dialog before the first start: not an official Zwift app, at your own risk, not for races, sign-in outside the launcher" width="100%">
+</td>
+<td valign="middle">
 
 ### Stays out of trouble
 
@@ -144,9 +173,81 @@ application launcher.
 - *Save error report…* writes a ZIP with the logs; tokens, passwords and email addresses are removed.
 - Help pages and troubleshooting tips are built in. The interface speaks English and German.
 
-<p align="center">
-  <img src="docs/screenshots/tretlager-warning.webp" alt="The warning dialog before the first start: not an official Zwift app, at your own risk, not for races, sign-in outside the launcher" width="80%">
-</p>
+</td>
+</tr>
+</table>
+
+## At a glance
+
+| | |
+|---|---|
+| **Runs on** | Linux with Flatpak; TUXEDO OS with Plasma is the main target, GNOME works |
+| **Your system provides** | BlueZ with a Bluetooth LE adapter, `avahi-daemon` and a Secret Service keyring (KWallet or GNOME Keyring); Tretlager brings its own Wine |
+| **Works with** | Bluetooth LE trainers and heart rate straps (FTMS, Cycling Power, Cycling Speed and Cadence, Heart Rate), or the Zwift Companion app; no ANT+ |
+| **Account** | your Zwift account, signed in on Zwift's own page |
+| **Languages** | English and German |
+| **Licence** | [GPL-3.0-or-later](LICENSE) |
+
+## Install
+
+> [!NOTE]
+> Tretlager targets current distributions with Flatpak. TUXEDO OS with Plasma is the main
+> target, GNOME works. Ubuntu 26.04 (GNOME) was tested with the Debian package, the Flatpak is
+> untested there. Fedora and openSUSE are planned but untested; reports are welcome.
+
+Your system needs Flatpak with the Flathub remote, BlueZ with a Bluetooth LE adapter, a running
+`avahi-daemon` and a Secret Service keyring (KWallet or GNOME Keyring). Tretlager brings
+everything else, including its own Wine.
+
+<table>
+<tr>
+<th width="50%">Flatpak bundle from GitHub</th>
+<th width="50%">Build it yourself</th>
+</tr>
+<tr>
+<td valign="top">
+
+1. Download `tretlager-<version>-x86_64.flatpak` from the
+   [latest release](https://github.com/linuxundich/tretlager/releases/latest).
+2. Install it:
+
+   ```sh
+   flatpak install --user tretlager-*.flatpak
+   ```
+
+</td>
+<td valign="top">
+
+```sh
+git clone https://github.com/linuxundich/tretlager.git
+cd tretlager
+build-aux/flatpak/build.sh
+```
+
+The first build compiles Wine and takes a while (about 15 minutes on 20 cores).
+
+</td>
+</tr>
+</table>
+
+Flatpak fetches the KDE 6.11 runtime from Flathub if it is missing, and on NVIDIA systems the
+matching driver extension. Start Tretlager from the application menu and follow the assistant;
+setting up Wine and downloading Zwift takes about 15 minutes.
+
+> [!TIP]
+> Bundles don't update themselves, so check the Releases page for new versions and install the
+> new bundle the same way.
+
+To remove Tretlager including the Zwift installation (about 10 GB), run
+`flatpak uninstall --delete-data de.linuxundich.Tretlager`. Sign out in Tretlager first to remove
+the Zwift session from your keyring.
+
+## Why Linux, why now
+
+Windows 10 no longer gets updates, and plenty of the computers that only ever run Zwift cannot
+officially run Windows 11. Zwift has already dropped support for Windows 8, and Windows 10 will
+probably follow at some point. Then it is either upgrading the hardware or switching to Linux. That
+is where Tretlager comes in: the old computer can stay, only the system underneath changes.
 
 ## How it works
 
@@ -185,44 +286,6 @@ known quirks are in [docs/HARDWARE.md](docs/HARDWARE.md).
 
 Other trainers and straps that use the standard Bluetooth services (FTMS, Cycling Power, Cycling
 Speed and Cadence, Heart Rate) should work but are untested. ANT+ is not supported.
-
-## Install
-
-> [!NOTE]
-> Tretlager targets current distributions with Flatpak. TUXEDO OS with Plasma is the main
-> target, GNOME works. Ubuntu 26.04 (GNOME) was tested with the Debian package, the Flatpak is
-> untested there. Fedora and openSUSE are planned but untested; reports are welcome.
-
-Your system needs Flatpak with the Flathub remote, BlueZ with a Bluetooth LE adapter, a running
-`avahi-daemon` and a Secret Service keyring (KWallet or GNOME Keyring). Tretlager brings
-everything else, including its own Wine.
-
-1. Download `tretlager-<version>-x86_64.flatpak` from the
-   [latest release](https://github.com/linuxundich/tretlager/releases/latest).
-2. Install it:
-
-```sh
-flatpak install --user tretlager-*.flatpak
-```
-
-Flatpak fetches the KDE 6.11 runtime from Flathub if it is missing, and on NVIDIA systems the
-matching driver extension. Start Tretlager from the application menu and follow the assistant;
-setting up Wine and downloading Zwift takes about 15 minutes. Bundles don't update themselves,
-so check the Releases page for new versions and install the new bundle the same way.
-
-To remove Tretlager including the Zwift installation (about 10 GB), run
-`flatpak uninstall --delete-data de.linuxundich.Tretlager`. Sign out in Tretlager first to remove
-the Zwift session from your keyring.
-
-### Build it yourself
-
-```sh
-git clone https://github.com/linuxundich/tretlager.git
-cd tretlager
-build-aux/flatpak/build.sh
-```
-
-The first build compiles Wine and takes a while (about 15 minutes on 20 cores).
 
 ## More
 

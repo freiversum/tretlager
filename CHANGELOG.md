@@ -4,6 +4,9 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+### Changed
+- README restructured: feature grid, screenshots beside the text, facts at a glance.
+
 ## [0.12.0] - 2026-11-16
 
 ### Added

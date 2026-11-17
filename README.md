@@ -199,13 +199,7 @@ Your system needs Flatpak with the Flathub remote, BlueZ with a Bluetooth LE ada
 `avahi-daemon` and a Secret Service keyring (KWallet or GNOME Keyring). Tretlager brings
 everything else, including its own Wine.
 
-<table>
-<tr>
-<th width="50%">Flatpak bundle from GitHub</th>
-<th width="50%">Build it yourself</th>
-</tr>
-<tr>
-<td valign="top">
+### Flatpak bundle from GitHub
 
 1. Download `tretlager-<version>-x86_64.flatpak` from the
    [latest release](https://github.com/linuxundich/tretlager/releases/latest).
@@ -215,8 +209,7 @@ everything else, including its own Wine.
    flatpak install --user tretlager-*.flatpak
    ```
 
-</td>
-<td valign="top">
+### Build it yourself
 
 ```sh
 git clone https://github.com/linuxundich/tretlager.git
@@ -225,10 +218,6 @@ build-aux/flatpak/build.sh
 ```
 
 The first build compiles Wine and takes a while (about 15 minutes on 20 cores).
-
-</td>
-</tr>
-</table>
 
 Flatpak fetches the KDE 6.11 runtime from Flathub if it is missing, and on NVIDIA systems the
 matching driver extension. Start Tretlager from the application menu and follow the assistant;

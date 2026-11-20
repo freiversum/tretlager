@@ -4,6 +4,11 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+### Added
+- *About Tretlager*: a quiet link “A star in the freiversum” (German “Ein Stern im freiversum”)
+  after the linuxundich.de button, opening https://freiversum.de/, the umbrella over the author's
+  independent projects.
+
 ### Changed
 - README restructured: feature grid, screenshots beside the text, facts at a glance.
 

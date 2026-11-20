@@ -50,6 +50,13 @@ ColumnsPage {
                 icon.name: "internet-web-browser"
                 onClicked: Qt.openUrlExternally("https://linuxundich.de/")
             }
+            // Umbrella brand over the author's independent projects; flat, so it stays in the background
+            Controls.Button {
+                text: i18n("A star in the freiversum")
+                icon.name: "draw-star"
+                flat: true
+                onClicked: Qt.openUrlExternally("https://freiversum.de/")
+            }
         }
     }
 

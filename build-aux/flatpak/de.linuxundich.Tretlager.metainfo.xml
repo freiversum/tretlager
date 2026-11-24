@@ -20,9 +20,9 @@
       to Zwift correctly. Do not use Tretlager for races or competitions with results.</p>
   </description>
   <launchable type="desktop-id">de.linuxundich.Tretlager.desktop</launchable>
-  <url type="homepage">https://github.com/linuxundich/tretlager</url>
-  <url type="bugtracker">https://github.com/linuxundich/tretlager/issues</url>
-  <url type="vcs-browser">https://github.com/linuxundich/tretlager</url>
+  <url type="homepage">https://github.com/freiversum/tretlager</url>
+  <url type="bugtracker">https://github.com/freiversum/tretlager/issues</url>
+  <url type="vcs-browser">https://github.com/freiversum/tretlager</url>
   <content_rating type="oars-1.1"/>
   <releases>
     <release version="0.12.0" date="2026-11-16">

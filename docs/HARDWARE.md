@@ -1,7 +1,7 @@
 # Tested hardware and software
 
 Tretlager is developed and tested on the hardware below, all of it my own. If you run it on
-something else, an [issue](https://github.com/linuxundich/tretlager/issues) with your results is
+something else, an [issue](https://github.com/freiversum/tretlager/issues) with your results is
 very welcome, whether it works or not.
 
 Status: October 31, 2026, Tretlager 0.9.0 and the current `master`.

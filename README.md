@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/linuxundich/tretlager/releases/latest"><strong>Download Flatpak</strong></a>
+  <a href="https://github.com/freiversum/tretlager/releases/latest"><strong>Download Flatpak</strong></a>
   &nbsp;·&nbsp; Flathub: not planned &nbsp;·&nbsp;
   <a href="https://linuxundich.de/en/projects/tretlager/">Project page</a>
   &nbsp;·&nbsp;
@@ -202,7 +202,7 @@ everything else, including its own Wine.
 ### Flatpak bundle from GitHub
 
 1. Download `tretlager-<version>-x86_64.flatpak` from the
-   [latest release](https://github.com/linuxundich/tretlager/releases/latest).
+   [latest release](https://github.com/freiversum/tretlager/releases/latest).
 2. Install it:
 
    ```sh
@@ -212,7 +212,7 @@ everything else, including its own Wine.
 ### Build it yourself
 
 ```sh
-git clone https://github.com/linuxundich/tretlager.git
+git clone https://github.com/freiversum/tretlager.git
 cd tretlager
 build-aux/flatpak/build.sh
 ```
@@ -289,7 +289,7 @@ Speed and Cadence, Heart Rate) should work but are untested. ANT+ is not support
 - Background: [feasibility study](FEASIBILITY.md), [UX concept](docs/ux-concept.md),
   [Flatpak plan](docs/flatpak.md), [updates](docs/updates.md),
   [QA audit](docs/qa-audit-2026-10-30.md)
-- Found a bug or tested other hardware? [Open an issue](https://github.com/linuxundich/tretlager/issues)
+- Found a bug or tested other hardware? [Open an issue](https://github.com/freiversum/tretlager/issues)
 
 ## On the blog
 

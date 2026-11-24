@@ -5,6 +5,23 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
 ## [Unreleased]
 
 ### Added
+- *Watch remote* (experimental, off by default): a Garmin watch running the Zwindoor app steers
+  Zwift – turn left or right at junctions, straight on, U-turn, Ride On, power-up, emotes, camera
+  and workout intensity. The watch can only act as a Bluetooth LE central, so Tretlager offers a
+  small GATT service on the same adapter as the sensor bridge and types the matching Zwift keyboard
+  shortcut into the Wine window through XTest (only when Zwift has the focus; it raises the window
+  first if needed). Runs in the interface process and also works with sensors through the Companion
+  app. Optionally offers the watch on the network as an OpenBikeControl controller for apps like
+  MyWhoosh or TrainingPeaks Virtual. New page *Watch remote* with status, the last commands and
+  test buttons. The core is vendored from the Zwindoor project (`tretlager/zwindoor/`).
+- *Watch remote* → *Zwift Companion link* (opt-in): Tretlager poses as the phone of the Zwift
+  Companion app (registers with Zwift's relay using the existing sign-in, the game connects over the
+  local network, plain protobuf frames as in Sauce for Zwift). The watch then shows the junction
+  ahead with the offered directions, the power-up that is ready and the Ride Ons received, and turns
+  (including straight on), U-turn, Ride On, power-up, emotes, photo and camera go straight to the game
+  – no keyboard, no window focus, no Plasma consent dialog. Workout keys still use the keyboard. Not
+  offered while the sensors come through the Companion app (one phone per Zwift account). Contradicts
+  Zwift's terms of service like the sign-in; explained next to the switch.
 - *About Tretlager*: a quiet link “A star in the freiversum” (German “Ein Stern im freiversum”)
   after the linuxundich.de button, opening https://freiversum.de/, the umbrella over the author's
   independent projects.

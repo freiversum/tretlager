@@ -27,7 +27,7 @@ Kirigami.ApplicationWindow {
     readonly property bool inWizard: current === "setup"
     readonly property bool navigation: !inWizard || backend.setupComplete
     readonly property var destinations: ({
-        "overview": "MainPage.qml", "sensors": "SensorsPage.qml", "help": "HelpPage.qml",
+        "overview": "MainPage.qml", "sensors": "SensorsPage.qml", "watch": "WatchRemotePage.qml", "help": "HelpPage.qml",
         "about": "AboutPage.qml" })
 
     function show(name, props) {
@@ -60,6 +60,13 @@ Kirigami.ApplicationWindow {
                 checkable: true
                 checked: root.current === "sensors"
                 onTriggered: root.show("sensors", { wizard: false })
+            },
+            Kirigami.Action {
+                text: i18n("Watch remote")
+                icon.name: "input-gamepad"
+                checkable: true
+                checked: root.current === "watch"
+                onTriggered: root.show("watch")
             },
             Kirigami.Action {
                 text: i18n("Help")

@@ -15,7 +15,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 from .. import APP_ID, __version__, build_id
 from . import desktopstyle, zwiftwindow
 from .i18n import LocalizedContext
-from ..core import applog, awake, bridgectl, btcompat, debug, display, gnomealive, helpdoc, instance, launch, login, power, prepare, report, setup, state, systemcheck, wine
+from ..core import applog, awake, bridgectl, btcompat, debug, display, gnomealive, helpdoc, instance, launch, login, power, prepare, report, setup, state, systemcheck, watchremote, wine
 from ..i18n import LANGUAGE, _, ngettext
 
 # Embedded sign-in (as in the official launcher): needs QtWebEngine. Without the module,
@@ -52,6 +52,7 @@ class Backend(QObject):
         self._init_setup()
         self._init_login()
         self._init_sensors()
+        self._init_watch()
         self._init_launch()
         self._init_report()
 
@@ -285,6 +286,7 @@ class Backend(QObject):
     def on_quit(self) -> None:
         """Clean up on quit: if Zwift is no longer running, stop the bridge (unless on autostart).
         Otherwise it would keep running if the window closed before the post-ride cleanup."""
+        self._watch.stop()
         zwift = self._launch.get("zwiftRunning", False)
         applog.info("Window closed, Zwift running: %s", zwift)
         if zwift:
@@ -369,6 +371,38 @@ class Backend(QObject):
             self._loginEvent.emit({"state": "none", "access_left": 0, "refresh_left": 0, "error": err})
         threading.Thread(target=work, daemon=True).start()
 
+
+    # --- Watch remote (Zwindoor) ---
+
+    watchRemoteChanged = Signal()
+    _watchChanged = Signal()
+
+    def _init_watch(self) -> None:
+        self._watch = watchremote.WatchRemote(on_change=self._watchChanged.emit)  # runner thread → queued
+        self._watchChanged.connect(self.watchRemoteChanged)
+        if watchremote.wanted():
+            self._watch.start()
+
+    @Property("QVariantMap", notify=watchRemoteChanged)
+    def watchRemote(self) -> dict:
+        return self._watch.snapshot()
+
+    @Slot(bool)
+    def setWatchRemote(self, on: bool) -> None:
+        watchremote.set_wanted(on)
+        if on:
+            self._watch.start()
+        else:
+            self._watch.stop()
+
+    @Slot(str, bool)
+    def setWatchRemoteOption(self, name: str, value: bool) -> None:
+        if name in ("obc", "bring_to_front") or (name == "companion" and (not value or watchremote.companion_allowed())):
+            self._watch.set_option(name, value)
+
+    @Slot(str)
+    def testWatchAction(self, name: str) -> None:
+        self._watch.test(name)
 
     # --- Sensors (bridge) ---
 

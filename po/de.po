@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tretlager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-16 22:04+0100\n"
+"POT-Creation-Date: 2026-11-24 08:48+0100\n"
 "PO-Revision-Date: 2026-10-31 17:00+0100\n"
 "Last-Translator: Christoph Langner <mail@christoph-langner.de>\n"
 "Language-Team: German\n"
@@ -146,7 +146,7 @@ msgstr "Zwift starten"
 msgid "Adjusting the window"
 msgstr "Fenster anpassen"
 
-#: tretlager/core/launch.py:235 tretlager/kde/app.py:709
+#: tretlager/core/launch.py:235 tretlager/kde/app.py:743
 msgid "Zwift is running"
 msgstr "Zwift läuft"
 
@@ -780,37 +780,37 @@ msgstr ""
 "Die Programmbibliotheken passen nicht zur installierten KDE-Laufzeit. Bitte "
 "Tretlager aktualisieren (flatpak update). Details im Protokoll."
 
-#: tretlager/kde/app.py:139
+#: tretlager/kde/app.py:140
 msgid "Requesting permission…"
 msgstr "Berechtigung anfragen …"
 
-#: tretlager/kde/app.py:159
+#: tretlager/kde/app.py:160
 #, python-brace-format
 msgid "Done: {wine}"
 msgstr "Fertig: {wine}"
 
-#: tretlager/kde/app.py:161
+#: tretlager/kde/app.py:162
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
 
-#: tretlager/kde/app.py:165
+#: tretlager/kde/app.py:166
 #, python-brace-format
 msgid "Helper exited with code {code}"
 msgstr "Helfer beendet mit Code {code}"
 
-#: tretlager/kde/app.py:543
+#: tretlager/kde/app.py:577
 msgid "Power source changed: AC"
 msgstr "Stromversorgung gewechselt: Netz"
 
-#: tretlager/kde/app.py:543
+#: tretlager/kde/app.py:577
 msgid "Power source changed: battery"
 msgstr "Stromversorgung gewechselt: Akku"
 
-#: tretlager/kde/app.py:545
+#: tretlager/kde/app.py:579
 msgid "Power source changed"
 msgstr "Stromversorgung gewechselt"
 
-#: tretlager/kde/app.py:546
+#: tretlager/kde/app.py:580
 msgid ""
 "Switching between AC and battery can upset the NVIDIA driver. If Zwift "
 "hangs, close it with Alt+F4 and restart it with the power adapter connected."
@@ -818,7 +818,7 @@ msgstr ""
 "Der Wechsel zwischen Netz und Akku kann den NVIDIA-Treiber stören. Hängt "
 "Zwift, Zwift mit Alt+F4 beenden und mit angeschlossenem Netzteil neu starten."
 
-#: tretlager/kde/app.py:575
+#: tretlager/kde/app.py:609
 msgid ""
 "GNU General Public License, version 3 or later: https://www.gnu.org/licenses/"
 "gpl-3.0.html"
@@ -826,61 +826,61 @@ msgstr ""
 "GNU General Public License, Version 3 oder später: https://www.gnu.org/"
 "licenses/gpl-3.0.html"
 
-#: tretlager/kde/app.py:592
+#: tretlager/kde/app.py:626
 msgid "Sensor bridge restarted after an update"
 msgstr "Sensor-Bridge nach Update neu gestartet"
 
-#: tretlager/kde/app.py:632
+#: tretlager/kde/app.py:666
 msgid "Zwift ride"
 msgstr "Zwift-Fahrt"
 
-#: tretlager/kde/app.py:661
+#: tretlager/kde/app.py:695
 msgid "valid"
 msgstr "gültig"
 
-#: tretlager/kde/app.py:661
+#: tretlager/kde/app.py:695
 msgid "renewed at start"
 msgstr "wird beim Start erneuert"
 
-#: tretlager/kde/app.py:662
+#: tretlager/kde/app.py:696
 msgid "expired – please sign in again"
 msgstr "abgelaufen – bitte neu anmelden"
 
-#: tretlager/kde/app.py:663
+#: tretlager/kde/app.py:697
 msgid "not signed in"
 msgstr "nicht angemeldet"
 
-#: tretlager/kde/app.py:666
+#: tretlager/kde/app.py:700
 #, python-brace-format
 msgid ", renewal for {n} more day"
 msgid_plural ", renewal for {n} more days"
 msgstr[0] ", Erneuerung noch {n} Tag"
 msgstr[1] ", Erneuerung noch {n} Tage"
 
-#: tretlager/kde/app.py:685
+#: tretlager/kde/app.py:719
 msgid "Preparing the start"
 msgstr "Start vorbereiten"
 
-#: tretlager/kde/app.py:706
+#: tretlager/kde/app.py:740
 #, python-brace-format
 msgid "Unexpected error ({name})"
 msgstr "Unerwarteter Fehler ({name})"
 
-#: tretlager/kde/app.py:727
+#: tretlager/kde/app.py:761
 #, python-brace-format
 msgid "{version} kept as the proven Wine version"
 msgstr "{version} als bewährte Wine-Version aufbewahrt"
 
-#: tretlager/kde/app.py:730
+#: tretlager/kde/app.py:764
 msgid "Zwift closed"
 msgstr "Zwift beendet"
 
-#: tretlager/kde/app.py:748
+#: tretlager/kde/app.py:782
 #, python-brace-format
 msgid "NVIDIA driver reported {errors}"
 msgstr "NVIDIA-Treiber meldete {errors}"
 
-#: tretlager/kde/app.py:808
+#: tretlager/kde/app.py:842
 #, python-brace-format
 msgid "Could not save the error report ({name})."
 msgstr "Der Fehlerbericht konnte nicht gespeichert werden ({name})."
@@ -913,7 +913,7 @@ msgstr "Wine und Werkzeuge installieren"
 msgid "System prepared"
 msgstr "System vorbereitet"
 
-#: tretlager/kde/qml/AboutPage.qml:13 tretlager/kde/qml/Main.qml:80
+#: tretlager/kde/qml/AboutPage.qml:13 tretlager/kde/qml/Main.qml:87
 msgid "About Tretlager"
 msgstr "Über Tretlager"
 
@@ -1481,7 +1481,7 @@ msgstr ""
 msgid "Go to overview"
 msgstr "Zur Übersicht"
 
-#: tretlager/kde/qml/HelpPage.qml:13 tretlager/kde/qml/Main.qml:65
+#: tretlager/kde/qml/HelpPage.qml:13 tretlager/kde/qml/Main.qml:72
 msgid "Help"
 msgstr "Hilfe"
 
@@ -2009,11 +2009,17 @@ msgstr "Protokoll des letzten Starts …"
 msgid "Tretlager"
 msgstr "Tretlager"
 
-#: tretlager/kde/qml/Main.qml:106
+#: tretlager/kde/qml/Main.qml:65 tretlager/kde/qml/WatchRemotePage.qml:10
+#: tretlager/kde/qml/WatchRemotePage.qml:21
+#: tretlager/kde/qml/WatchRemotePage.qml:56
+msgid "Watch remote"
+msgstr "Uhr-Fernbedienung"
+
+#: tretlager/kde/qml/Main.qml:113
 msgid "Zwift is still running"
 msgstr "Zwift läuft noch"
 
-#: tretlager/kde/qml/Main.qml:108
+#: tretlager/kde/qml/Main.qml:115
 msgid ""
 "If Tretlager quits now, Zwift ends too. Best save and end the ride in Zwift "
 "first; Tretlager only minimises itself during the ride."
@@ -2022,7 +2028,7 @@ msgstr ""
 "in Zwift speichern und beenden; Tretlager minimiert sich während der Fahrt "
 "nur."
 
-#: tretlager/kde/qml/Main.qml:109
+#: tretlager/kde/qml/Main.qml:116
 msgid ""
 "Tretlager will then not tidy up after the ride. Best end the ride in Zwift "
 "first; Tretlager only minimises itself during the ride."
@@ -2030,7 +2036,7 @@ msgstr ""
 "Tretlager räumt dann nach der Fahrt nicht auf. Die Fahrt am besten zuerst in "
 "Zwift beenden; Tretlager minimiert sich während der Fahrt nur."
 
-#: tretlager/kde/qml/Main.qml:113
+#: tretlager/kde/qml/Main.qml:120
 msgid "Quit anyway"
 msgstr "Trotzdem beenden"
 
@@ -2555,6 +2561,315 @@ msgstr "Beenden"
 #: tretlager/kde/qml/WarningDialog.qml:93
 msgid "Understood, at my own risk"
 msgstr "Verstanden, auf eigene Gefahr"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:14
+msgid "delivered"
+msgstr "angekommen"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:14
+msgid "Zwift was not in front"
+msgstr "Zwift war nicht im Vordergrund"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:15
+#: tretlager/kde/qml/WatchRemotePage.qml:74
+msgid "Zwift is not running"
+msgstr "Zwift läuft nicht"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:15
+msgid "unknown action"
+msgstr "unbekannte Aktion"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:16
+msgid "typing failed"
+msgstr "Tippen fehlgeschlagen"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:16
+msgid "remote switched off"
+msgstr "Fernbedienung ausgeschaltet"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:17
+msgid "garbled command"
+msgstr "unlesbarer Befehl"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:22
+msgid ""
+"Turn at junctions, give a Ride On or fire a power-up from the buttons of "
+"your Garmin watch. Tretlager types the matching Zwift keyboard shortcut."
+msgstr ""
+"An Abzweigungen abbiegen, ein Ride On geben oder ein Power-up zünden – mit "
+"den Tasten deiner Garmin-Uhr. Tretlager tippt dafür das passende Zwift-"
+"Tastenkürzel."
+
+#: tretlager/kde/qml/WatchRemotePage.qml:28
+msgid "Bluetooth: %1"
+msgstr "Bluetooth: %1"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:33
+msgid ""
+"Tretlager cannot type into Zwift (%1). The watch still connects, but the "
+"commands have no effect."
+msgstr ""
+"Tretlager kann nicht in Zwift tippen (%1). Die Uhr verbindet sich trotzdem, "
+"die Befehle bewirken aber nichts."
+
+#: tretlager/kde/qml/WatchRemotePage.qml:39
+msgid ""
+"The desktop is holding back Tretlager's key presses. Plasma shows the dialog "
+"“Remote Control – python3 is asking to control input devices”: python3 is "
+"Tretlager. Click Allow, otherwise the commands do not reach Zwift."
+msgstr ""
+"Der Desktop hält Tretlagers Tastendrücke zurück. Plasma zeigt den Dialog "
+"„Remote Control – python3 is asking to control input devices“: python3 ist "
+"Tretlager. Auf Allow (Zulassen) klicken, sonst kommen die Befehle nicht bei "
+"Zwift an."
+
+#: tretlager/kde/qml/WatchRemotePage.qml:44
+msgid ""
+"On the first command Plasma asks “python3 is asking to control input "
+"devices” – python3 is Tretlager. Try a button below before the ride and "
+"click Allow; with “Always allow” it does not ask again."
+msgstr ""
+"Beim ersten Befehl fragt Plasma „python3 is asking to control input devices“ "
+"– python3 ist Tretlager. Vor der Fahrt unten einen Knopf ausprobieren und "
+"Allow (Zulassen) klicken; mit „Always allow“ fragt Plasma nicht wieder."
+
+#: tretlager/kde/qml/WatchRemotePage.qml:49
+msgid "Remote"
+msgstr "Fernbedienung"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:51
+msgid ""
+"The watch connects over Bluetooth LE to this computer, on the same adapter "
+"as the sensor bridge. It also works when the sensors come through the Zwift "
+"Companion app."
+msgstr ""
+"Die Uhr verbindet sich per Bluetooth LE mit diesem Rechner, über denselben "
+"Adapter wie die Sensor-Bridge. Das klappt auch, wenn die Sensoren über die "
+"Zwift Companion App kommen."
+
+#: tretlager/kde/qml/WatchRemotePage.qml:57
+msgid "Waiting for the watch"
+msgstr "Wartet auf die Uhr"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:57
+msgid "Starting…"
+msgstr "Startet …"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:58
+msgid "Off – the computer is not visible to the watch"
+msgstr "Aus – die Uhr sieht diesen Rechner nicht"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:64
+msgid "Watch"
+msgstr "Uhr"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:66
+msgid "connected"
+msgstr "verbunden"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:66
+msgid "not connected – start ZWindoor on the watch"
+msgstr "nicht verbunden – ZWindoor auf der Uhr starten"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:70
+msgid "Zwift window"
+msgstr "Zwift-Fenster"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:72
+msgid "in front, ready"
+msgstr "im Vordergrund, bereit"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:73
+msgid "in the background – brought to the front on the next command"
+msgstr "im Hintergrund – wird beim nächsten Befehl nach vorne geholt"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:78
+msgid "Bring Zwift to the front"
+msgstr "Zwift nach vorne holen"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:79
+msgid "Raise the Zwift window before typing if another window has the focus"
+msgstr ""
+"Zwift-Fenster vor dem Tippen nach vorne holen, wenn ein anderes Fenster den "
+"Fokus hat"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:85
+msgid "Zwift Companion link"
+msgstr "Zwift-Companion-Verbindung"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:87
+msgid ""
+"Not available while the sensors come through the Zwift Companion app: Zwift "
+"accepts only one phone per account."
+msgstr ""
+"Nicht verfügbar, solange die Sensoren über die Zwift Companion App kommen: "
+"Zwift erlaubt nur ein Telefon pro Konto."
+
+#: tretlager/kde/qml/WatchRemotePage.qml:88
+msgid ""
+"Show junctions and the power-up on the watch and steer without the keyboard "
+"– also straight on. Tretlager poses as the Companion app and replaces it on "
+"your phone."
+msgstr ""
+"Abzweigungen und Power-up auf der Uhr anzeigen und ohne Tastatur steuern – "
+"auch geradeaus. Tretlager gibt sich als Companion App aus und ersetzt sie "
+"auf dem Smartphone."
+
+#: tretlager/kde/qml/WatchRemotePage.qml:89
+msgid "Connected to the game – commands go straight to Zwift"
+msgstr "Mit dem Spiel verbunden – Befehle gehen direkt an Zwift"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:90
+msgid "Sign in to Zwift first (overview)"
+msgstr "Erst bei Zwift anmelden (Übersicht)"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:91
+msgid "Zwift: %1"
+msgstr "Zwift: %1"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:92
+msgid "Waiting for Zwift – the game connects once it runs"
+msgstr "Wartet auf Zwift – das Spiel verbindet sich, sobald es läuft"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:97
+msgid ""
+"Uses the same undocumented connection as the Zwift Companion app, with your "
+"Zwift sign-in. This contradicts Zwift's terms of service. While it is on, "
+"the Companion app on your phone loses its connection to the game."
+msgstr ""
+"Nutzt dieselbe undokumentierte Verbindung wie die Zwift Companion App, mit "
+"deiner Zwift-Anmeldung. Das widerspricht den Nutzungsbedingungen von Zwift. "
+"Solange sie an ist, verliert die Companion App auf dem Smartphone die "
+"Verbindung zum Spiel."
+
+#: tretlager/kde/qml/WatchRemotePage.qml:102
+msgid "OpenBikeControl on the network"
+msgstr "OpenBikeControl im Netzwerk"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:103
+msgid "A trainer app is connected"
+msgstr "Eine Trainings-App ist verbunden"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:104
+msgid ""
+"Also offer the watch to trainer apps such as MyWhoosh or TrainingPeaks "
+"Virtual"
+msgstr ""
+"Die Uhr auch Trainings-Apps wie MyWhoosh oder TrainingPeaks Virtual anbieten"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:110
+msgid "Watch buttons"
+msgstr "Tasten der Uhr"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:114
+msgid "Up (left)"
+msgstr "Up (links)"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:114
+msgid "Turn left"
+msgstr "Links abbiegen"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:114
+msgid "hold: menu"
+msgstr "halten: Menü"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:115
+msgid "Down (left)"
+msgstr "Down (links)"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:115
+#: tretlager/kde/qml/WatchRemotePage.qml:178
+msgid "Ride On"
+msgstr "Ride On"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:115
+msgid "hold: straight on"
+msgstr "halten: geradeaus"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:116
+msgid "Start (right)"
+msgstr "Start (rechts)"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:116
+msgid "Turn right"
+msgstr "Rechts abbiegen"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:116
+msgid "hold: U-turn"
+msgstr "halten: U-Turn"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:117
+msgid "Back (right)"
+msgstr "Back (rechts)"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:117
+#: tretlager/kde/qml/WatchRemotePage.qml:179
+msgid "Power-up"
+msgstr "Power-up"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:117
+msgid "hold: quit"
+msgstr "halten: beenden"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:136
+msgid "Last actions"
+msgstr "Letzte Aktionen"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:141
+msgid "No commands yet"
+msgstr "Noch keine Befehle"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:142
+msgid "Press a button on the watch or try one below."
+msgstr "Drück eine Taste an der Uhr oder probier unten eine aus."
+
+#: tretlager/kde/qml/WatchRemotePage.qml:156
+msgid "%1 · %2 · %3 ms"
+msgstr "%1 · %2 · %3 ms"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:164
+msgid "Try without the watch"
+msgstr "Ohne Uhr ausprobieren"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:166
+msgid ""
+"Sends the command as if it came from the watch. Zwift has to be running; "
+"Tretlager brings it to the front first."
+msgstr ""
+"Schickt den Befehl, als käme er von der Uhr. Zwift muss laufen; Tretlager "
+"holt es vorher nach vorne."
+
+#: tretlager/kde/qml/WatchRemotePage.qml:177
+msgid "Left"
+msgstr "Links"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:177
+msgid "Straight on"
+msgstr "Geradeaus"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:178
+msgid "Right"
+msgstr "Rechts"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:179
+msgid "U-turn"
+msgstr "U-Turn"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:192
+msgid "Set up the watch"
+msgstr "Uhr einrichten"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:195
+msgid "Install ZWindoor on the watch"
+msgstr "ZWindoor auf die Uhr bringen"
+
+#: tretlager/kde/qml/WatchRemotePage.qml:196
+msgid ""
+"Copy zwindoor.prg to the folder GARMIN/APPS on the watch (USB), then start "
+"ZWindoor from the apps list. It finds this computer by itself."
+msgstr ""
+"zwindoor.prg per USB in den Ordner GARMIN/APPS der Uhr kopieren, dann "
+"ZWindoor in der App-Liste starten. Die App findet diesen Rechner selbst."
 
 #: tretlager/kde/qml/WelcomePage.qml:9
 msgid "Welcome"

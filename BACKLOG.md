@@ -281,6 +281,10 @@ Implementation in milestones (core Python `tretlager/core`, UI PySide6 + Kirigam
     not to depend on EOF).
   - The same pattern can hit every `run()` call that starts Wine, not just dotnet48.
 
+## GitHub presentation
+
+- [ ] Social preview image with the next update: a screenshot or a designed card of the app, 1280×640 PNG (2:1), under 1 MB, keep text and key content in the centre with ~40 px margin. Keep the source in the repo (`docs/social-preview.png`). Upload by hand under *Settings* | *General* | *Social preview* (there is no API for it). GitHub shows it on topic pages (github.com/topics/…), in Explore, and as the link card on Mastodon, Bluesky and in chats.
+
 ## Watch remote (ZWindoor)
 - [x] Page *Watch remote*, GATT service via BlueZ, XTest output into Wine, OpenBikeControl option (core vendored from ZWindoor)
 - [x] First test with the real fēnix 7X Pro on tinytin (2026-11-24): the watch connects to the ZWindoor bridge (BlueZ, AX201) and every action arrives

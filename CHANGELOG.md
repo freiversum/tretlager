@@ -5,6 +5,7 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
 ## [Unreleased]
 
 ### Changed
+- Watch remote: ZWindoor bridge core 0.2.0 (on Linux unchanged: BlueZ with the adapter's own address).
 - Watch remote: ZWindoor bridge core 0.1.1. Stopping the remote no longer fails after Bluetooth could not start.
 
 ## [0.13.0] - 2026-11-24

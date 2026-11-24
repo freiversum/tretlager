@@ -246,7 +246,10 @@ Implementation in milestones (core Python `tretlager/core`, UI PySide6 + Kirigam
   - With Companion: never start the bridge (no D-Bus activation, no autostart, no DIRCON announcement),
     skip the Bluetooth checks in the system check, adapt start page and help (phone and PC in the same network)
   - Check whether Zwift under Wine finds the Companion app at all (network, mDNS from the prefix)
-- [x] **Zwift video clips (F9 / “Video Screenshots”).** Done with option A (Wine patches in the Flatpak, `build-aux/flatpak/patches/wine/README.md`); still to confirm in a real ride. Zwift records clips through Media Foundation
+- [ ] **Zwift video clips (F9 / “Video Screenshots”).** Option A (Wine patches in the Flatpak, `build-aux/flatpak/patches/wine/README.md`, 0001–0011). State 2026-11-24: recording runs and Zwift writes a valid temporary clip (1230×720 H.264), no crashes in a one-hour ride; saving still to confirm with patches 0010/0011.
+  - On tinytin the patched Wine runs as the “previous Wine” copy (`data/tretlager/wine-kept`, version `wine-11.20-mf11`, state `wine.use_kept`); the original copy is in `wine-kept.orig-claude`. After the test: build the Flatpak once, put the original back, turn `use_kept` off.
+  - Saved clips will have no sound: Wine has no AAC encoder MFT (`SetInputMediaType(outAudioStream)` → `MF_E_TOPO_CODEC_NOT_FOUND`). Possible follow-up: an AAC encoder MFT in winegstreamer on top of `avenc_aac`.
+  - Bump the version for the release; the Flatpak was rebuilt several times as 0.13.0. Zwift records clips through Media Foundation
   (`IMFSinkWriter` → MP4). Under Wine 11.20 this cannot work (checked 2026-11-24 on tinytin, Zwift logs
   from 12.–16.11.): the first clip fails with `IMFSinkWriter::Finalize failed, hr=0x80004001` (E_NOTIMPL),
   the next nine with `CreateSinkWriter failed, hr=0x80070020` (sharing violation, the first file is still
@@ -309,3 +312,4 @@ Implementation in milestones (core Python `tretlager/core`, UI PySide6 + Kirigam
 - [x] Companion link (ZWindoor phase 4): relay registration with the Tretlager sign-in, game state to the watch, commands without keyboard
 - [ ] Companion link in a real ride: does the relay accept the Game_Launcher token, does the game connect over plain TCP, which messages carry the turn choices (legacy buttons or IntersectionAhead), are Ride Ons forwarded
 
+- [ ] Watch drops for a few seconds while the bridge (re)connects a sensor on the same adapter (AX201: watch gone 12 s while the HRM-Pro service discovery took 23 s, 2026-11-24). Try the sensors on the UB500 stick and the watch on the built-in adapter.

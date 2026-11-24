@@ -281,12 +281,12 @@ Implementation in milestones (core Python `tretlager/core`, UI PySide6 + Kirigam
     not to depend on EOF).
   - The same pattern can hit every `run()` call that starts Wine, not just dotnet48.
 
-## Watch remote (Zwindoor)
-- [x] Page *Watch remote*, GATT service via BlueZ, XTest output into Wine, OpenBikeControl option (core vendored from Zwindoor)
-- [x] First test with the real fēnix 7X Pro on tinytin (2026-11-24): the watch connects to the Zwindoor bridge (BlueZ, AX201) and every action arrives
+## Watch remote (ZWindoor)
+- [x] Page *Watch remote*, GATT service via BlueZ, XTest output into Wine, OpenBikeControl option (core vendored from ZWindoor)
+- [x] First test with the real fēnix 7X Pro on tinytin (2026-11-24): the watch connects to the ZWindoor bridge (BlueZ, AX201) and every action arrives
 - [ ] Same next to the running sensor bridge, latency, 60-minute ride
 - [ ] Check that Zwift under Wine accepts XTest key presses and that KWin honours the activation request (Plasma first shows "python3 is asking to control input devices"; seen with Wine notepad on tinytin, not yet allowed)
 - [ ] If XTest does not reach Zwift: fall back to uinput through the pkexec helper
-- [x] Companion link (Zwindoor phase 4): relay registration with the Tretlager sign-in, game state to the watch, commands without keyboard
+- [x] Companion link (ZWindoor phase 4): relay registration with the Tretlager sign-in, game state to the watch, commands without keyboard
 - [ ] Companion link in a real ride: does the relay accept the Game_Launcher token, does the game connect over plain TCP, which messages carry the turn choices (legacy buttons or IntersectionAhead), are Ride Ons forwarded
 

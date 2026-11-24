@@ -14,7 +14,7 @@ Status characteristic (bridge -> watch, read / notify):
                               game state from the Zwift Companion link (companion.py): flags 0x01 linked,
                               0x02 junction ahead, 0x04/0x08/0x10 left/straight/right offered, 0x20 power-up
 
-Info characteristic (read): UTF-8 text "Zwindoor <version> · <host>".
+Info characteristic (read): UTF-8 text "ZWindoor <version> · <host>".
 
 The watch advertises nothing; the bridge advertises the service UUID with flags 0x06 (LE General
 Discoverable, BR/EDR not supported) - Connect IQ drops scan results without "general discoverable".

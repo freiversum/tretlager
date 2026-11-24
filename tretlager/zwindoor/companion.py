@@ -47,7 +47,7 @@ SUB_LEFT, SUB_STRAIGHT, SUB_RIGHT, SUB_HUD_ON, SUB_HUD_OFF = 1010, 1011, 1012, 1
 START_CONNECTED_SESSION, ACTION_BAR_OPEN = 5, 10
 RIDE_ON_SOCIAL = 2
 
-# Zwift POWERUP_TYPE (powerUpId - 1) -> Zwindoor power-up id (watch: Protocol.PU_*)
+# Zwift POWERUP_TYPE (powerUpId - 1) -> ZWindoor power-up id (watch: Protocol.PU_*)
 PU_NONE, PU_UNKNOWN = 0, 10
 POWERUPS = {0: 1, 1: 2, 2: 9, 3: 9, 4: 5, 5: 3, 6: 4, 7: 6, 8: 7}  # feather, draft, XP, burrito, aero, ghost …
 
@@ -84,7 +84,7 @@ class GameState:
 
 
 def command_for(action: int, value: int, hud_on: bool = True) -> dict | None:
-    """CompanionToGameCommand fields for a Zwindoor action, or None if the game has no command."""
+    """CompanionToGameCommand fields for a ZWindoor action, or None if the game has no command."""
     simple = {actions.U_TURN: CMD_U_TURN, actions.POWERUP: CMD_POWERUP, actions.BELL: CMD_BELL}
     if action in simple:
         t = simple[action]
@@ -257,7 +257,7 @@ class CompanionLink:
         return True
 
     async def command(self, action: int, value: int) -> bool | None:
-        """Send a Zwindoor action to the game. None = the game has no such command (use the keyboard)."""
+        """Send a ZWindoor action to the game. None = the game has no such command (use the keyboard)."""
         cmd = command_for(action, value, self.hud_on)
         if cmd is None:
             return None

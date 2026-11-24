@@ -4,7 +4,7 @@ import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.formcard as FormCard
 
-// Watch remote (Zwindoor): a Garmin watch steers Zwift – turns, Ride On, power-up.
+// Watch remote (ZWindoor): a Garmin watch steers Zwift – turns, Ride On, power-up.
 ColumnsPage {
     id: page
     title: i18n("Watch remote")

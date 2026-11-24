@@ -1,4 +1,4 @@
-"""Watch remote: Tretlager glue around the vendored Zwindoor core."""
+"""Watch remote: Tretlager glue around the vendored ZWindoor core."""
 
 import asyncio
 import time

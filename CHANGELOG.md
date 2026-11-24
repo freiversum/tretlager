@@ -5,7 +5,7 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
 ## [Unreleased]
 
 ### Added
-- *Watch remote* (experimental, off by default): a Garmin watch running the Zwindoor app steers
+- *Watch remote* (experimental, off by default): a Garmin watch running the ZWindoor app steers
   Zwift – turn left or right at junctions, straight on, U-turn, Ride On, power-up, emotes, camera
   and workout intensity. The watch can only act as a Bluetooth LE central, so Tretlager offers a
   small GATT service on the same adapter as the sensor bridge and types the matching Zwift keyboard
@@ -13,7 +13,7 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
   first if needed). Runs in the interface process and also works with sensors through the Companion
   app. Optionally offers the watch on the network as an OpenBikeControl controller for apps like
   MyWhoosh or TrainingPeaks Virtual. New page *Watch remote* with status, the last commands and
-  test buttons. The core is vendored from the Zwindoor project (`tretlager/zwindoor/`).
+  test buttons. The core is vendored from the ZWindoor project (`tretlager/zwindoor/`).
 - *Watch remote* → *Zwift Companion link* (opt-in): Tretlager poses as the phone of the Zwift
   Companion app (registers with Zwift's relay using the existing sign-in, the game connects over the
   local network, plain protobuf frames as in Sauce for Zwift). The watch then shows the junction

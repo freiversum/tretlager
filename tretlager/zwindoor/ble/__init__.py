@@ -1,4 +1,4 @@
-"""Bluetooth LE peripheral backends: offer the Zwindoor GATT service to the watch.
+"""Bluetooth LE peripheral backends: offer the ZWindoor GATT service to the watch.
 
 A backend calls `on_write(data)` for every write to the command characteristic and sends what that
 coroutine returns as a notification on the status characteristic. `notify(data)` sends unsolicited

@@ -61,7 +61,7 @@ class BridgeRunner:
         self.engine = Engine(sink, self.config)
         self.engine.listeners += [lambda ev: [cb(ev) for cb in self.on_event]]
         self.engine.state_listeners += [lambda s: [cb(s) for cb in self.on_state]]
-        info = f"Zwindoor {__version__} · {socket.gethostname()}".encode()
+        info = f"ZWindoor {__version__} · {socket.gethostname()}".encode()
         self.peripheral = self._peripheral_factory(self.engine.handle_write, info, adapter=self.config.adapter)
         try:
             await self.peripheral.start()

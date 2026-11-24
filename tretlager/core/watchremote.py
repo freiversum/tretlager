@@ -1,8 +1,8 @@
-"""Watch remote: a Garmin watch running the Zwindoor app steers Zwift (turns, Ride On, power-up …).
+"""Watch remote: a Garmin watch running the ZWindoor app steers Zwift (turns, Ride On, power-up …).
 
 The watch can only act as a Bluetooth LE central, so Tretlager offers a small GATT service on the
 same adapter the sensor bridge uses and types the matching Zwift keyboard shortcuts into the Wine
-window via XTest. The core comes from the Zwindoor project (tretlager/zwindoor, vendored).
+window via XTest. The core comes from the ZWindoor project (tretlager/zwindoor, vendored).
 
 Runs inside the interface process (not in the sensor bridge): it needs the X11 display Wine uses,
 and it also works when the sensors come through the Zwift Companion app. Off by default; the
@@ -21,7 +21,7 @@ from . import applog, bridgectl, login, paths, state
 CONFIG_FILE = paths.STATE / "watch-remote.json"
 HISTORY = 5
 
-# Buttons on the page "Watch remote" -> (action, value) of the Zwindoor protocol
+# Buttons on the page "Watch remote" -> (action, value) of the ZWindoor protocol
 TEST_ACTIONS = {
     "left": (0x18, 1), "right": (0x19, 1), "straight": (0x10, 1), "uturn": (0x37, 1),
     "rideon": (0x20, 0x01), "powerup": (0x50, 1),

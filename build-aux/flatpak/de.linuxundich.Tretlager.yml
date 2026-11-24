@@ -87,6 +87,8 @@ modules:
           - patches/wine/0007-msvproc-Scale-when-input-and-output-content-sizes-differ.patch
           - patches/wine/0008-winegstreamer-Pack-I420-YV12-planes-like-Windows-for.patch
           - patches/wine/0009-mfplat-Close-the-file-handle-in-IMFByteStream-Close.patch
+          - patches/wine/0010-mfreadwrite-Shut-down-a-media-sink-the-writer-create.patch
+          - patches/wine/0011-winegstreamer-Pack-4-2-0-frames-from-the-parser-like.patch
 
   - name: tretlager
     buildsystem: simple

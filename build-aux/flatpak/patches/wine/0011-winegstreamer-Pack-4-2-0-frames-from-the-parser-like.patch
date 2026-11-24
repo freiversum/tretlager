@@ -1,0 +1,94 @@
+From 1bd7af155aaaca6335a38f6214411bee6dcfc6f8 Mon Sep 17 00:00:00 2001
+From: Tretlager <noreply@freiversum.de>
+Date: Tue, 24 Nov 2026 20:41:38 +0100
+Subject: [PATCH 11/11] winegstreamer: Pack 4:2:0 frames from the parser like
+ Windows.
+
+GStreamer pads rows to 4 bytes; the media type built from the caps and
+Windows use packed planes. Zwift reads its 1230x720 clip back for the
+thumbnail and rejected 1330560-byte NV12 frames (expected 1328400).
+---
+ dlls/winegstreamer/wg_parser.c | 60 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+
+diff --git a/dlls/winegstreamer/wg_parser.c b/dlls/winegstreamer/wg_parser.c
+index b3d5bbc..360c273 100644
+--- a/dlls/winegstreamer/wg_parser.c
++++ b/dlls/winegstreamer/wg_parser.c
+@@ -732,6 +732,64 @@ static gboolean sink_event_cb(GstPad *pad, GstObject *parent, GstEvent *event)
+     return TRUE;
+ }
+ 
++/* GStreamer pads 4:2:0 rows to 4 bytes, Windows (and the media type built from the caps)
++ * expects packed planes, e.g. 1230x720 NV12 is 1328400 bytes, not 1330560. */
++static GstBuffer *pack_video_buffer(GstCaps *caps, GstBuffer *buffer)
++{
++    guint width, height, chroma_width, chroma_height, rows, row_bytes, plane, i;
++    gsize size, dst_stride[3], offset = 0;
++    GstVideoFrame frame;
++    GstVideoInfo info;
++    GstBuffer *packed;
++    GstMapInfo map;
++    bool nv12;
++
++    if (!caps || !gst_video_info_from_caps(&info, caps))
++        return buffer;
++    if (GST_VIDEO_INFO_FORMAT(&info) != GST_VIDEO_FORMAT_I420 && GST_VIDEO_INFO_FORMAT(&info) != GST_VIDEO_FORMAT_YV12
++            && GST_VIDEO_INFO_FORMAT(&info) != GST_VIDEO_FORMAT_NV12)
++        return buffer;
++
++    nv12 = GST_VIDEO_INFO_FORMAT(&info) == GST_VIDEO_FORMAT_NV12;
++    width = GST_VIDEO_INFO_WIDTH(&info);
++    height = GST_VIDEO_INFO_HEIGHT(&info);
++    chroma_width = (width + 1) / 2;
++    chroma_height = (height + 1) / 2;
++    dst_stride[0] = nv12 ? GST_ROUND_UP_2(width) : width;
++    dst_stride[1] = dst_stride[2] = nv12 ? dst_stride[0] : chroma_width;
++    size = dst_stride[0] * height + dst_stride[1] * chroma_height * (nv12 ? 1 : 2);
++
++    if (!gst_buffer_get_video_meta(buffer) && gst_buffer_get_size(buffer) == size)
++        return buffer;
++    if (!gst_video_frame_map(&frame, &info, buffer, GST_MAP_READ))
++        return buffer;
++    if (!(packed = gst_buffer_new_allocate(NULL, size, NULL)) || !gst_buffer_map(packed, &map, GST_MAP_WRITE))
++    {
++        if (packed)
++            gst_buffer_unref(packed);
++        gst_video_frame_unmap(&frame);
++        return buffer;
++    }
++
++    for (plane = 0; plane < GST_VIDEO_FRAME_N_PLANES(&frame); ++plane)
++    {
++        const guint8 *src = GST_VIDEO_FRAME_PLANE_DATA(&frame, plane);
++        gint src_stride = GST_VIDEO_FRAME_PLANE_STRIDE(&frame, plane);
++
++        rows = plane ? chroma_height : height;
++        row_bytes = plane ? (nv12 ? chroma_width * 2 : chroma_width) : width;
++        for (i = 0; i < rows; ++i)
++            memcpy(map.data + offset + i * dst_stride[plane], src + i * src_stride, row_bytes);
++        offset += dst_stride[plane] * rows;
++    }
++
++    gst_buffer_unmap(packed, &map);
++    gst_video_frame_unmap(&frame);
++    gst_buffer_copy_into(packed, buffer, GST_BUFFER_COPY_FLAGS | GST_BUFFER_COPY_TIMESTAMPS, 0, -1);
++    gst_buffer_unref(buffer);
++    return packed;
++}
++
+ static GstFlowReturn sink_chain_cb(GstPad *pad, GstObject *parent, GstBuffer *buffer)
+ {
+     struct wg_parser_stream *stream = gst_pad_get_element_private(pad);
+@@ -780,6 +838,8 @@ static GstFlowReturn sink_chain_cb(GstPad *pad, GstObject *parent, GstBuffer *bu
+         return GST_FLOW_FLUSHING;
+     }
+ 
++    buffer = pack_video_buffer(stream->current_caps, buffer);
++
+     if (!gst_buffer_map(buffer, &stream->map_info, GST_MAP_READ))
+     {
+         pthread_mutex_unlock(&parser->mutex);
+-- 
+2.56.1
+

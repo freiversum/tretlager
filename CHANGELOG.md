@@ -16,6 +16,9 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
   came out sheared. Both fixed (patches 0007, 0008).
   The finished clip also stayed locked because `IMFByteStream::Close()` was a stub, so Zwift could not
   reopen it to save it (patch 0009).
+  Saving a clip then failed twice more: a writer that gave up on the audio stream kept the file
+  locked (patch 0010), and frames read back for the thumbnail had padded rows (patch 0011). Zwift
+  saves clips without sound for now, Wine has no AAC encoder.
 
 ### Changed
 - Watch remote: ZWindoor bridge core 0.2.0 (on Linux unchanged: BlueZ with the adapter's own address).

@@ -1,0 +1,56 @@
+From c252ead5fbe905386dfd38cfa51b809e477074aa Mon Sep 17 00:00:00 2001
+From: Tretlager <noreply@freiversum.de>
+Date: Tue, 24 Nov 2026 20:38:46 +0100
+Subject: [PATCH 10/11] mfreadwrite: Shut down a media sink the writer created
+ itself on release.
+
+The MPEG-4 sink and its stream sinks reference each other until
+Shutdown(). A writer that failed before Finalize() (Zwift's SaveMovie
+when the audio stream has no encoder) left its file locked, so the retry
+on the same path failed with a sharing violation.
+---
+ dlls/mfreadwrite/writer.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/dlls/mfreadwrite/writer.c b/dlls/mfreadwrite/writer.c
+index 1c848f9..cc109bb 100644
+--- a/dlls/mfreadwrite/writer.c
++++ b/dlls/mfreadwrite/writer.c
+@@ -80,6 +80,7 @@ struct sink_writer
+ 
+     IMFPresentationClock *clock;
+     IMFMediaSink *sink;
++    BOOL owns_sink; /* created from a URL or byte stream, shut down on release */
+     enum writer_state state;
+     HRESULT status;
+     MF_SINK_WRITER_STATISTICS stats;
+@@ -500,7 +501,14 @@ static ULONG WINAPI sink_writer_Release(IMFSinkWriterEx *iface)
+         if (writer->clock)
+             IMFPresentationClock_Release(writer->clock);
+         if (writer->sink)
++        {
++            /* The sink holds its stream sinks and they hold the sink, only Shutdown() breaks
++             * that cycle and closes the file. Without it a writer that failed before
++             * Finalize() left the file locked. */
++            if (writer->owns_sink)
++                IMFMediaSink_Shutdown(writer->sink);
+             IMFMediaSink_Release(writer->sink);
++        }
+         if (writer->attributes)
+             IMFAttributes_Release(writer->attributes);
+         if (writer->callback)
+@@ -1686,7 +1694,10 @@ HRESULT create_sink_writer_from_url(const WCHAR *url, IMFByteStream *bytestream,
+         return hr;
+     }
+ 
+-    hr = create_sink_writer_from_sink(sink, attributes, riid, out);
++    if (SUCCEEDED(hr = create_sink_writer_from_sink(sink, attributes, riid, out)))
++        impl_from_IMFSinkWriterEx(*out)->owns_sink = TRUE;
++    else
++        IMFMediaSink_Shutdown(sink);
+     IMFMediaSink_Release(sink);
+ 
+     return hr;
+-- 
+2.56.1
+

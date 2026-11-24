@@ -84,6 +84,8 @@ modules:
           - patches/wine/0004-winegstreamer-Request-samples-from-the-media-sink-st.patch
           - patches/wine/0005-mfreadwrite-Implement-sink-writer-Finalize.patch
           - patches/wine/0006-mfreadwrite-Leave-room-in-transform-output-buffers-f.patch
+          - patches/wine/0007-msvproc-Scale-when-input-and-output-content-sizes-differ.patch
+          - patches/wine/0008-winegstreamer-Pack-I420-YV12-planes-like-Windows-for.patch
 
   - name: tretlager
     buildsystem: simple

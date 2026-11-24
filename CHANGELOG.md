@@ -11,6 +11,9 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
   left a 0-byte file and Zwift switched the feature off after ten attempts.
   With an odd window size (for example mirrored displays, 1440×843) the video processor overran its
   output buffer and Zwift crashed; the sink writer now allocates those buffers with headroom.
+  Zwift records the window (RGB32) and asks for a smaller H.264 clip (for example 1440×843 to
+  1230×720): Wine's video processor could not scale and overran the frame, and 1230-wide I420 frames
+  came out sheared. Both fixed (patches 0007, 0008).
 
 ### Changed
 - Watch remote: ZWindoor bridge core 0.2.0 (on Linux unchanged: BlueZ with the adapter's own address).

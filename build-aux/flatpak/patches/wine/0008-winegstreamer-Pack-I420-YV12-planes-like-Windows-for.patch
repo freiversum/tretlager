@@ -1,0 +1,49 @@
+From 97350d26f3c9ec3b5dcc1feb97e2072ba54b2a6a Mon Sep 17 00:00:00 2001
+From: Tretlager <noreply@freiversum.de>
+Date: Tue, 24 Nov 2026 19:43:07 +0100
+Subject: [PATCH] winegstreamer: Pack I420/YV12 planes like Windows for
+ unpadded input.
+
+gst_video_info_align() rounds strides up to 4 and the luma height up to
+2, Windows and the ffmpeg video processor pack the planes (chroma rounded
+up for odd sizes). A 1230x720 I420 frame (Zwift's clip size) was sheared.
+---
+ dlls/winegstreamer/wg_transform.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/dlls/winegstreamer/wg_transform.c b/dlls/winegstreamer/wg_transform.c
+index c19c2c8..2f5c851 100644
+--- a/dlls/winegstreamer/wg_transform.c
++++ b/dlls/winegstreamer/wg_transform.c
+@@ -107,6 +107,8 @@ static void align_video_info_planes(MFVideoInfo *video_info, gsize plane_align,
+         GstVideoInfo *info, GstVideoAlignment *align)
+ {
+     bool fix_nv12 = !plane_align && info->finfo->format == GST_VIDEO_FORMAT_NV12 && (info->width & 3) && (info->width & 3) != 3;
++    bool fix_yuv420 = !plane_align && (info->finfo->format == GST_VIDEO_FORMAT_I420
++            || info->finfo->format == GST_VIDEO_FORMAT_YV12) && ((info->width & 7) || (info->height & 1));
+     bool bottom_up = video_info->VideoFlags & MFVideoFlag_BottomUpLinearRep;
+     const MFVideoArea *aperture = &video_info->MinimumDisplayAperture;
+ 
+@@ -168,6 +170,19 @@ static void align_video_info_planes(MFVideoInfo *video_info, gsize plane_align,
+         info->size = info->offset[1] + info->stride[0] * aligned_height / 2;
+         align->stride_align[0] = 1;
+     }
++    else if (fix_yuv420 && !align->padding_left && !align->padding_top && !align->padding_right && !align->padding_bottom)
++    {
++        /* Windows packs I420/YV12 planes without row padding, gst_video_info_align() rounds
++         * the strides up to 4. Chroma planes are rounded up for odd sizes, as ffmpeg does. */
++        gint chroma_width = (info->width + 1) / 2, chroma_height = (info->height + 1) / 2;
++        info->stride[0] = info->width;
++        info->stride[1] = info->stride[2] = chroma_width;
++        info->offset[0] = 0;
++        info->offset[1] = info->width * info->height;
++        info->offset[2] = info->offset[1] + chroma_width * chroma_height;
++        info->size = info->offset[2] + chroma_width * chroma_height;
++        align->stride_align[0] = 1;
++    }
+     else
+     {
+         align->stride_align[0] = plane_align;
+-- 
+2.56.1
+

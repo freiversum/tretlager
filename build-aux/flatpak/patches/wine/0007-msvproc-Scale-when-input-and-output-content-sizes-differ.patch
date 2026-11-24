@@ -1,0 +1,47 @@
+From: Tretlager <noreply@freiversum.de>
+Subject: [PATCH] msvproc: Scale when input and output content sizes differ.
+
+The video processor forced the output aperture to the input content rect,
+so a 1440x843 RGB32 input with a 1230x720 output (Zwift's video clips)
+made swscale write 1440x843 into a 1230x720 frame and crash. Scale from
+the input content rect to the output content rect instead, like native.
+---
+--- a/dlls/msvproc/video_processor.c
++++ b/dlls/msvproc/video_processor.c
+@@ -500,6 +500,22 @@
+     get_mf_video_content_rect(input_info, &input_rect);
+     get_mf_video_content_rect(output_info, &output_rect);
+ 
++    /* Different content sizes: scale the input content to the output content, like native does. */
++    if (input_rect.right - input_rect.left != output_rect.right - output_rect.left
++            || input_rect.bottom - input_rect.top != output_rect.bottom - output_rect.top)
++    {
++        TRACE("Scaling %s to %s\n", wine_dbgstr_rect(&input_rect), wine_dbgstr_rect(&output_rect));
++        input_info->MinimumDisplayAperture.OffsetX.value = input_rect.left;
++        input_info->MinimumDisplayAperture.OffsetY.value = input_rect.top;
++        input_info->MinimumDisplayAperture.Area.cx = input_rect.right - input_rect.left;
++        input_info->MinimumDisplayAperture.Area.cy = input_rect.bottom - input_rect.top;
++        output_info->MinimumDisplayAperture.OffsetX.value = output_rect.left;
++        output_info->MinimumDisplayAperture.OffsetY.value = output_rect.top;
++        output_info->MinimumDisplayAperture.Area.cx = output_rect.right - output_rect.left;
++        output_info->MinimumDisplayAperture.Area.cy = output_rect.bottom - output_rect.top;
++        return;
++    }
++
+     if (!EqualRect(&input_rect, &output_rect))
+     {
+         FIXME("Mismatched content size %s vs %s\n", wine_dbgstr_rect(&input_rect),
+@@ -554,9 +570,11 @@
+     video_frame_init_from_format(&impl->output_frame, impl->output_format);
+     if ((ret = av_frame_get_buffer(&impl->output_frame, 0)) < 0)
+         goto failed;
+-    video_frame_init_aperture(&impl->output_frame, impl->input_format);
++    video_frame_init_aperture(&impl->output_frame, impl->output_format);
+ 
+-    av_opt_set(impl->context, "sws_flags", "neighbor", 0);
++    /* Nearest neighbour is exact for format conversion only; use bilinear when resizing. */
++    av_opt_set(impl->context, "sws_flags", impl->input_frame.width != impl->output_frame.width
++            || impl->input_frame.height != impl->output_frame.height ? "bilinear" : "neighbor", 0);
+     av_opt_set_int(impl->context, "threads", 0, 0);
+     av_opt_set_int(impl->context, "srcw", impl->input_frame.width, 0);
+     av_opt_set_int(impl->context, "srch", impl->input_frame.height, 0);

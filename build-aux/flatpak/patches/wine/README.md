@@ -14,11 +14,14 @@ after ten failures Zwift turns the feature off.
 | 0006 | Tretlager: transform output buffers get headroom and 64-byte alignment; with an odd window height (two monitors, 1440×843) the ffmpeg video processor overran the buffer and Zwift crashed |
 | 0007 | Tretlager: the video processor (msvproc) scales when input and output sizes differ (bilinear); it used to force the output to the input size, so Zwift's 1440×843 → 1230×720 overran the frame and crashed |
 | 0008 | Tretlager: winegstreamer packs unpadded I420/YV12 input like Windows (gst rounded strides to 4 and the luma height to 2, which sheared 1230-wide frames) |
+| 0009 | Tretlager: `IMFByteStream::Close()` closes the file; with the stub the finished clip stayed locked, Zwift could not reopen it with a source reader (`SaveMovieReader`) and every next clip failed with a sharing violation |
 
 Test: a small MinGW program writes 30–90 frames through `MFCreateSinkWriterFromURL` and calls
 `Finalize()`, with NV12 and RGB32 input at 1280×720, 1440×843, 1235×701 and Zwift's case
 (RGB32 1440×843 in, H.264 1230×720 out); repeated runs with NVENC (`nvh264enc`) on tinytin produce
-valid files with correct duration, timestamps and image (a column gradient stays vertical).
+valid files with correct duration, timestamps and image (a column gradient stays vertical);
+like Zwift, the test then reopens the clip with `MFCreateSourceReaderFromURL` and writes the next
+clip to the same path.
 
 When moving to a newer Wine: check whether upstream merged !10298 or implemented `Finalize`,
 then drop the matching patches.

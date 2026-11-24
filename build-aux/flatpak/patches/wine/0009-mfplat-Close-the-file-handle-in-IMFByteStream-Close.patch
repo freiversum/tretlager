@@ -1,0 +1,33 @@
+From: Tretlager <noreply@freiversum.de>
+Subject: [PATCH] mfplat: Close the file handle in IMFByteStream::Close().
+
+Media sinks close their byte stream on Shutdown(). With the stub the file
+stayed open as long as anything referenced the stream, so Zwift could not
+reopen its finished clip with a source reader, and the next sink writer on
+the same path failed with a sharing violation.
+---
+--- a/dlls/mfplat/main.c
++++ b/dlls/mfplat/main.c
+@@ -4175,9 +4175,20 @@
+ 
+ static HRESULT WINAPI bytestream_file_Close(IMFByteStream *iface)
+ {
+-    FIXME("%p\n", iface);
++    struct bytestream *stream = impl_from_IMFByteStream(iface);
+ 
+-    return E_NOTIMPL;
++    TRACE("%p\n", iface);
++
++    /* Release the file now; whoever still holds the stream must not keep it locked. */
++    EnterCriticalSection(&stream->cs);
++    if (stream->hfile)
++    {
++        CloseHandle(stream->hfile);
++        stream->hfile = NULL;
++    }
++    LeaveCriticalSection(&stream->cs);
++
++    return S_OK;
+ }
+ 
+ static HRESULT WINAPI bytestream_SetCurrentPosition(IMFByteStream *iface, QWORD position)

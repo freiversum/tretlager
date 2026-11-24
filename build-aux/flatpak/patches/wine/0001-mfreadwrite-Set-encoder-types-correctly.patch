@@ -1,0 +1,41 @@
+From d2e01aa8a8d1efa31e3b2cbb4667486cad6c56da Mon Sep 17 00:00:00 2001
+From: Ziqing Hui <zhui@codeweavers.com>
+Date: Tue, 10 Mar 2026 13:52:28 +0800
+Subject: [PATCH 1/5] mfreadwrite: Set encoder types correctly.
+
+---
+ dlls/mfreadwrite/writer.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/dlls/mfreadwrite/writer.c b/dlls/mfreadwrite/writer.c
+index 88d523a..ea01e5c 100644
+--- a/dlls/mfreadwrite/writer.c
++++ b/dlls/mfreadwrite/writer.c
+@@ -298,14 +298,20 @@ static HRESULT stream_create_transforms(struct stream *stream,
+         {
+             /* Create the converter with a recursive call. */
+             hr = stream_create_transforms(stream, input_type, encoder_input_type, FALSE, attributes);
+-            IMFMediaType_Release(encoder_input_type);
+             if (SUCCEEDED(hr))
+             {
+                 /* Converter is already set in the recursive call, set encoder here. */
+-                stream->encoder = transform;
+-                TRACE("Created encoder %p.", transform);
+-                break;
++                if (SUCCEEDED(hr = stream_set_transform(stream, transform, encoder_input_type, output_type, TRUE)))
++                {
++                    IMFMediaType_Release(encoder_input_type);
++                    break;
++                }
++                else
++                {
++                    stream_release_transforms(stream);
++                }
+             }
++            IMFMediaType_Release(encoder_input_type);
+         }
+ 
+         IMFTransform_Release(transform);
+-- 
+2.56.1
+

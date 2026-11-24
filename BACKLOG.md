@@ -246,7 +246,7 @@ Implementation in milestones (core Python `tretlager/core`, UI PySide6 + Kirigam
   - With Companion: never start the bridge (no D-Bus activation, no autostart, no DIRCON announcement),
     skip the Bluetooth checks in the system check, adapt start page and help (phone and PC in the same network)
   - Check whether Zwift under Wine finds the Companion app at all (network, mDNS from the prefix)
-- [ ] **Zwift video clips (F9 / “Video Screenshots”).** Zwift records clips through Media Foundation
+- [x] **Zwift video clips (F9 / “Video Screenshots”).** Done with option A (Wine patches in the Flatpak, `build-aux/flatpak/patches/wine/README.md`); still to confirm in a real ride. Zwift records clips through Media Foundation
   (`IMFSinkWriter` → MP4). Under Wine 11.20 this cannot work (checked 2026-11-24 on tinytin, Zwift logs
   from 12.–16.11.): the first clip fails with `IMFSinkWriter::Finalize failed, hr=0x80004001` (E_NOTIMPL),
   the next nine with `CreateSinkWriter failed, hr=0x80070020` (sharing violation, the first file is still

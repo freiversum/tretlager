@@ -1,0 +1,38 @@
+From a2be500e950c00b8b3fcda04f46aadc2b152abba Mon Sep 17 00:00:00 2001
+From: Tretlager <noreply@freiversum.de>
+Date: Tue, 24 Nov 2026 18:33:03 +0100
+Subject: [PATCH 3/5] winegstreamer: Use a time segment for muxer input
+ streams.
+
+Samples carry presentation times. With a bytes segment mp4mux cannot
+compute running time, so every packet ended up with DTS 0 and a bogus PTS.
+---
+ dlls/winegstreamer/wg_muxer.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/dlls/winegstreamer/wg_muxer.c b/dlls/winegstreamer/wg_muxer.c
+index 0a9f0f8..9a7ec59 100644
+--- a/dlls/winegstreamer/wg_muxer.c
++++ b/dlls/winegstreamer/wg_muxer.c
+@@ -443,7 +443,8 @@ NTSTATUS wg_muxer_start(void *args)
+         char buffer[64];
+ 
+         sprintf(buffer, "wg_muxer_stream_src_%u", stream->id);
+-        gst_segment_init(&stream->segment, GST_FORMAT_BYTES);
++        /* Samples carry PTS in time units; a bytes segment leaves the muxer without running time. */
++        gst_segment_init(&stream->segment, GST_FORMAT_TIME);
+         if (!gst_pad_set_active(stream->my_src, 1))
+             return status;
+         if (!push_event(stream->my_src, gst_event_new_stream_start(buffer))
+@@ -544,7 +545,7 @@ NTSTATUS wg_muxer_finalize(void *args)
+     /* Notify each stream of EOS. */
+     LIST_FOR_EACH_ENTRY(stream, &muxer->streams, struct wg_muxer_stream, entry)
+     {
+-        if (!push_event(stream->my_src, gst_event_new_segment_done(GST_FORMAT_BYTES, -1))
++        if (!push_event(stream->my_src, gst_event_new_segment_done(GST_FORMAT_TIME, -1))
+                 || !push_event(stream->my_src, gst_event_new_eos()))
+             return STATUS_UNSUCCESSFUL;
+     }
+-- 
+2.56.1
+

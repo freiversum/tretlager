@@ -1,0 +1,55 @@
+From fe6c26c21817f6b0ed54d2e6247172f60e5a9221 Mon Sep 17 00:00:00 2001
+From: Tretlager <noreply@freiversum.de>
+Date: Tue, 24 Nov 2026 18:33:03 +0100
+Subject: [PATCH 4/5] winegstreamer: Request samples from the media sink
+ streams.
+
+Native sinks send MEStreamSinkRequestSample after starting and after each
+processed sample. Without it a sink writer never hands queued samples to
+the MPEG-4 sink and the file stays empty.
+---
+ dlls/winegstreamer/media_sink.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/dlls/winegstreamer/media_sink.c b/dlls/winegstreamer/media_sink.c
+index 1e0e1d0..d896f36 100644
+--- a/dlls/winegstreamer/media_sink.c
++++ b/dlls/winegstreamer/media_sink.c
+@@ -601,7 +601,11 @@ static HRESULT media_sink_start(struct media_sink *media_sink)
+ 
+     media_sink->state = STATE_STARTED;
+ 
+-    return media_sink_queue_stream_event(media_sink, MEStreamSinkStarted);
++    if (FAILED(hr = media_sink_queue_stream_event(media_sink, MEStreamSinkStarted)))
++        return hr;
++
++    /* Like the native sinks, ask every stream for its first sample. */
++    return media_sink_queue_stream_event(media_sink, MEStreamSinkRequestSample);
+ }
+ 
+ static HRESULT media_sink_stop(struct media_sink *media_sink)
+@@ -651,6 +655,21 @@ static HRESULT media_sink_process(struct media_sink *media_sink, IMFSample *samp
+     hr = wg_muxer_push_sample(muxer, wg_sample, stream_id);
+     wg_sample_release(wg_sample);
+ 
++    /* Ask for the next sample, otherwise a sink writer stops delivering after the first one. */
++    if (media_sink->state == STATE_STARTED || media_sink->state == STATE_PAUSED)
++    {
++        struct stream_sink *stream_sink;
++
++        LIST_FOR_EACH_ENTRY(stream_sink, &media_sink->stream_sinks, struct stream_sink, entry)
++        {
++            if (stream_sink->id != stream_id)
++                continue;
++            IMFMediaEventQueue_QueueEventParamVar(stream_sink->event_queue,
++                    MEStreamSinkRequestSample, &GUID_NULL, S_OK, NULL);
++            break;
++        }
++    }
++
+     return hr;
+ }
+ 
+-- 
+2.56.1
+

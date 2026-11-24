@@ -1,0 +1,247 @@
+From 6753a3b3fc895234a81fc1abeed243191f29a692 Mon Sep 17 00:00:00 2001
+From: Tretlager <noreply@freiversum.de>
+Date: Tue, 24 Nov 2026 18:33:03 +0100
+Subject: [PATCH 5/5] mfreadwrite: Implement sink writer Finalize().
+
+Drain converter and encoder, wait until the stream sinks took the queued
+samples, finalize the media sink and shut it down so it closes the byte
+stream.
+---
+ dlls/mfreadwrite/writer.c | 209 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 207 insertions(+), 2 deletions(-)
+
+diff --git a/dlls/mfreadwrite/writer.c b/dlls/mfreadwrite/writer.c
+index 8a8977a..ad069d4 100644
+--- a/dlls/mfreadwrite/writer.c
++++ b/dlls/mfreadwrite/writer.c
+@@ -35,6 +35,7 @@ enum writer_state
+ {
+     SINK_WRITER_STATE_INITIAL = 0,
+     SINK_WRITER_STATE_WRITING,
++    SINK_WRITER_STATE_FINALIZED,
+ };
+ 
+ struct marker_context
+@@ -1004,13 +1005,217 @@ static HRESULT WINAPI sink_writer_Flush(IMFSinkWriterEx *iface, DWORD index)
+     return hr;
+ }
+ 
+-static HRESULT WINAPI sink_writer_Finalize(IMFSinkWriterEx *iface)
++struct finalize_callback
++{
++    IMFAsyncCallback IMFAsyncCallback_iface;
++    LONG refcount;
++    IMFAsyncResult *result;
++    HANDLE event;
++};
++
++static struct finalize_callback *impl_from_finalize_IMFAsyncCallback(IMFAsyncCallback *iface)
++{
++    return CONTAINING_RECORD(iface, struct finalize_callback, IMFAsyncCallback_iface);
++}
++
++static HRESULT WINAPI finalize_callback_QueryInterface(IMFAsyncCallback *iface, REFIID riid, void **out)
++{
++    if (IsEqualIID(riid, &IID_IMFAsyncCallback) || IsEqualIID(riid, &IID_IUnknown))
++    {
++        *out = iface;
++        IMFAsyncCallback_AddRef(iface);
++        return S_OK;
++    }
++
++    *out = NULL;
++    return E_NOINTERFACE;
++}
++
++static ULONG WINAPI finalize_callback_AddRef(IMFAsyncCallback *iface)
+ {
+-    FIXME("%p.\n", iface);
++    struct finalize_callback *callback = impl_from_finalize_IMFAsyncCallback(iface);
++    return InterlockedIncrement(&callback->refcount);
++}
++
++/* The work queue may release its async result (and with it this callback) after Finalize() returned. */
++static ULONG WINAPI finalize_callback_Release(IMFAsyncCallback *iface)
++{
++    struct finalize_callback *callback = impl_from_finalize_IMFAsyncCallback(iface);
++    ULONG refcount = InterlockedDecrement(&callback->refcount);
+ 
++    if (!refcount)
++    {
++        if (callback->result)
++            IMFAsyncResult_Release(callback->result);
++        CloseHandle(callback->event);
++        free(callback);
++    }
++
++    return refcount;
++}
++
++static HRESULT WINAPI finalize_callback_GetParameters(IMFAsyncCallback *iface, DWORD *flags, DWORD *queue)
++{
+     return E_NOTIMPL;
+ }
+ 
++static HRESULT WINAPI finalize_callback_Invoke(IMFAsyncCallback *iface, IMFAsyncResult *result)
++{
++    struct finalize_callback *callback = impl_from_finalize_IMFAsyncCallback(iface);
++
++    IMFAsyncResult_AddRef((callback->result = result));
++    SetEvent(callback->event);
++
++    return S_OK;
++}
++
++static const IMFAsyncCallbackVtbl finalize_callback_vtbl =
++{
++    finalize_callback_QueryInterface,
++    finalize_callback_AddRef,
++    finalize_callback_Release,
++    finalize_callback_GetParameters,
++    finalize_callback_Invoke,
++};
++
++static HRESULT stream_drain_transforms(struct stream *stream)
++{
++    HRESULT hr = S_OK;
++
++    if (stream->converter)
++    {
++        IMFTransform_ProcessMessage(stream->converter, MFT_MESSAGE_NOTIFY_END_OF_STREAM, 0);
++        if (SUCCEEDED(hr = IMFTransform_ProcessMessage(stream->converter, MFT_MESSAGE_COMMAND_DRAIN, 0)))
++            hr = stream_drain_transform_output(stream, TRUE);
++    }
++    if (SUCCEEDED(hr) && stream->encoder)
++    {
++        IMFTransform_ProcessMessage(stream->encoder, MFT_MESSAGE_NOTIFY_END_OF_STREAM, 0);
++        if (SUCCEEDED(hr = IMFTransform_ProcessMessage(stream->encoder, MFT_MESSAGE_COMMAND_DRAIN, 0)))
++            hr = stream_drain_transform_output(stream, FALSE);
++    }
++
++    return hr;
++}
++
++static BOOL stream_head_is_sample(struct stream *stream)
++{
++    struct pending_item *item;
++
++    if (list_empty(&stream->queue)) return FALSE;
++    item = LIST_ENTRY(list_head(&stream->queue), struct pending_item, entry);
++    return !!item->sample;
++}
++
++static HRESULT WINAPI sink_writer_Finalize(IMFSinkWriterEx *iface)
++{
++    struct sink_writer *writer = impl_from_IMFSinkWriterEx(iface);
++    struct finalize_callback *callback;
++    IMFFinalizableMediaSink *sink;
++    HRESULT hr, status;
++    DWORD start;
++    unsigned int i;
++
++    TRACE("%p.\n", iface);
++
++    EnterCriticalSection(&writer->cs);
++
++    if (writer->state != SINK_WRITER_STATE_WRITING)
++    {
++        LeaveCriticalSection(&writer->cs);
++        return MF_E_INVALIDREQUEST;
++    }
++
++    /* Push out what the converter and encoder still hold, and hand queued samples to the sink. */
++    for (i = 0; i < writer->streams.count; ++i)
++    {
++        struct stream *stream = &writer->streams.items[i];
++
++        if (FAILED(hr = stream_drain_transforms(stream)))
++            WARN("Failed to drain transforms for stream %u, hr %#lx.\n", i, hr);
++
++        while (stream->stats.dwNumOutstandingSinkSampleRequests && stream_head_is_sample(stream))
++        {
++            if (FAILED(hr = sink_writer_process_sample(writer, stream)))
++            {
++                WARN("Failed to process sample for stream %u, hr %#lx.\n", i, hr);
++                break;
++            }
++        }
++    }
++
++    writer->state = SINK_WRITER_STATE_FINALIZED;
++
++    LeaveCriticalSection(&writer->cs);
++
++    /* Wait until every stream sink has taken its queued samples and asks for more. */
++    start = GetTickCount();
++    for (;;)
++    {
++        BOOL pending = FALSE;
++
++        EnterCriticalSection(&writer->cs);
++        for (i = 0; i < writer->streams.count; ++i)
++        {
++            struct stream *stream = &writer->streams.items[i];
++
++            if (stream_head_is_sample(stream) || !stream->stats.dwNumOutstandingSinkSampleRequests)
++                pending = TRUE;
++        }
++        status = writer->status;
++        LeaveCriticalSection(&writer->cs);
++
++        if (!pending || FAILED(status))
++            break;
++        if (GetTickCount() - start > 10000)
++        {
++            WARN("Timed out waiting for the sink to take the remaining samples.\n");
++            break;
++        }
++        Sleep(5);
++    }
++
++    hr = S_OK;
++    if (SUCCEEDED(IMFMediaSink_QueryInterface(writer->sink, &IID_IMFFinalizableMediaSink, (void **)&sink)))
++    {
++        if (!(callback = calloc(1, sizeof(*callback))))
++            hr = E_OUTOFMEMORY;
++        else
++        {
++            callback->IMFAsyncCallback_iface.lpVtbl = &finalize_callback_vtbl;
++            callback->refcount = 1;
++            callback->event = CreateEventW(NULL, FALSE, FALSE, NULL);
++
++            if (SUCCEEDED(hr = IMFFinalizableMediaSink_BeginFinalize(sink, &callback->IMFAsyncCallback_iface, NULL)))
++            {
++                WaitForSingleObject(callback->event, INFINITE);
++                hr = IMFFinalizableMediaSink_EndFinalize(sink, callback->result);
++                /* Drop our reference to the result now, it holds one on the callback. */
++                IMFAsyncResult_Release(callback->result);
++                callback->result = NULL;
++            }
++            else
++                WARN("Failed to begin finalization, hr %#lx.\n", hr);
++
++            IMFAsyncCallback_Release(&callback->IMFAsyncCallback_iface);
++        }
++        IMFFinalizableMediaSink_Release(sink);
++    }
++
++    if (writer->clock)
++        IMFPresentationClock_Stop(writer->clock);
++
++    /* Shut the sink down, so it closes its byte stream. */
++    IMFMediaSink_Shutdown(writer->sink);
++
++    if (SUCCEEDED(hr) && FAILED(status))
++        hr = status;
++
++    TRACE("Finalized writer %p, hr %#lx.\n", writer, hr);
++
++    return hr;
++}
++
+ static HRESULT sink_writer_get_service(void *object, REFGUID service, REFIID riid, void **ret)
+ {
+     IUnknown *iface = object;
+-- 
+2.56.1
+

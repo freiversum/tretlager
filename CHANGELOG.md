@@ -4,6 +4,12 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+### Fixed
+- Zwift's video clips (F9, *Video Screenshots*) work: the bundled Wine 11.20 gets five patches for
+  the Media Foundation sink writer (encoder in the write path, `Finalize()`, sample requests and a
+  time segment in the MPEG-4 sink), see `build-aux/flatpak/patches/wine/`. Before, every clip failed,
+  left a 0-byte file and Zwift switched the feature off after ten attempts.
+
 ### Changed
 - Watch remote: ZWindoor bridge core 0.2.0 (on Linux unchanged: BlueZ with the adapter's own address).
 - Watch remote: ZWindoor bridge core 0.1.1. Stopping the remote no longer fails after Bluetooth could not start.

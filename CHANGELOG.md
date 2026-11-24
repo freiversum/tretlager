@@ -4,6 +4,8 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-11-24
+
 ### Added
 - *Watch remote* (experimental, off by default): a Garmin watch running the ZWindoor app steers
   Zwift – turn left or right at junctions, straight on, U-turn, Ride On, power-up, emotes, camera

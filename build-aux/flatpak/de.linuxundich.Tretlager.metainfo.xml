@@ -25,6 +25,14 @@
   <url type="vcs-browser">https://github.com/freiversum/tretlager</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="0.13.0" date="2026-11-24">
+      <description>
+        <p>New page Watch remote: a Garmin watch or Edge bike computer running the ZWindoor app steers
+        Zwift – turns, straight on, U-turn, Ride On, power-up and more. Off by default. Optionally,
+        Tretlager can link to the game like the Zwift Companion app and show the junction ahead and
+        the power-up on the watch.</p>
+      </description>
+    </release>
     <release version="0.12.0" date="2026-11-16">
       <description>
         <p>The Zwift Companion app on your phone can now hold trainer and heart rate strap instead of

@@ -7,7 +7,7 @@ emotes – without keyboard and without window focus.
 
 Plain mode as used by Sauce for Zwift: every message is a 4-byte big-endian length plus a
 protobuf message (GameToCompanion from the game, CompanionToGame to the game). Field numbers
-from Sauce's zwift.proto (GPL-3.0) and RoadCaptain (Artistic 2.0); see KONZEPT.md, phase 4.
+from Sauce's zwift.proto (GPL-3.0) and RoadCaptain (Artistic 2.0); see docs/architecture.md.
 
 Only one phone per Zwift account: registering replaces the real Companion app. Opt-in; using the
 undocumented relay contradicts Zwift's terms of service.

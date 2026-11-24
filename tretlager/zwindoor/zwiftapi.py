@@ -1,7 +1,7 @@
 """The few Zwift web calls the Companion link needs, plus the launcher sign-in for the Windows shell.
 
 Undocumented endpoints, as used by Sauce for Zwift and RoadCaptain (protocol facts, see
-KONZEPT.md). Using them contradicts Zwift's terms of service; the Companion link is therefore
+docs/architecture.md). Using them contradicts Zwift's terms of service; the Companion link is therefore
 opt-in and private.
 
 Tretlager brings its own sign-in (core/login.py) and only hands the access token in.

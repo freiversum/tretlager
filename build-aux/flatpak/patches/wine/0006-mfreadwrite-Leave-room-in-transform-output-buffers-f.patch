@@ -1,0 +1,32 @@
+From e4e6ad0c4fec2bd346c30cfe733bba27588956ae Mon Sep 17 00:00:00 2001
+From: Tretlager <noreply@freiversum.de>
+Date: Tue, 24 Nov 2026 19:05:43 +0100
+Subject: [PATCH] mfreadwrite: Leave room in transform output buffers for odd
+ frame sizes.
+
+cbSize of planar formats rounds the chroma planes of odd heights down,
+the ffmpeg based video processor writes them rounded up and overran the
+buffer (Zwift crashed with a 1440x843 window).
+---
+ dlls/mfreadwrite/writer.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/dlls/mfreadwrite/writer.c b/dlls/mfreadwrite/writer.c
+index ad069d4..1c848f9 100644
+--- a/dlls/mfreadwrite/writer.c
++++ b/dlls/mfreadwrite/writer.c
+@@ -361,7 +361,10 @@ static HRESULT allocate_transform_output(IMFTransform *transform, IMFSample **sa
+ 
+     if (FAILED(hr = MFCreateSample(sample)))
+         return hr;
+-    if (FAILED(hr = MFCreateMemoryBuffer(output_info.cbSize, &buffer)))
++    /* The cbSize of planar formats rounds the chroma planes of odd frame heights down, while
++     * converters based on ffmpeg write them rounded up. Leave room for that, aligned for SIMD. */
++    if (FAILED(hr = MFCreateAlignedMemoryBuffer(output_info.cbSize + output_info.cbSize / 64 + 4096,
++            MF_64_BYTE_ALIGNMENT, &buffer)))
+     {
+         IMFSample_Release(*sample);
+         *sample = NULL;
+-- 
+2.56.1
+

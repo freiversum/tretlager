@@ -83,6 +83,7 @@ modules:
           - patches/wine/0003-winegstreamer-Use-a-time-segment-for-muxer-input-str.patch
           - patches/wine/0004-winegstreamer-Request-samples-from-the-media-sink-st.patch
           - patches/wine/0005-mfreadwrite-Implement-sink-writer-Finalize.patch
+          - patches/wine/0006-mfreadwrite-Leave-room-in-transform-output-buffers-f.patch
 
   - name: tretlager
     buildsystem: simple

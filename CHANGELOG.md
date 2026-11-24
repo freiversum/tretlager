@@ -9,6 +9,8 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
   the Media Foundation sink writer (encoder in the write path, `Finalize()`, sample requests and a
   time segment in the MPEG-4 sink), see `build-aux/flatpak/patches/wine/`. Before, every clip failed,
   left a 0-byte file and Zwift switched the feature off after ten attempts.
+  With an odd window size (for example mirrored displays, 1440×843) the video processor overran its
+  output buffer and Zwift crashed; the sink writer now allocates those buffers with headroom.
 
 ### Changed
 - Watch remote: ZWindoor bridge core 0.2.0 (on Linux unchanged: BlueZ with the adapter's own address).

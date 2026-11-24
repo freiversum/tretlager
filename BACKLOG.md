@@ -246,6 +246,21 @@ Implementation in milestones (core Python `tretlager/core`, UI PySide6 + Kirigam
   - With Companion: never start the bridge (no D-Bus activation, no autostart, no DIRCON announcement),
     skip the Bluetooth checks in the system check, adapt start page and help (phone and PC in the same network)
   - Check whether Zwift under Wine finds the Companion app at all (network, mDNS from the prefix)
+- [ ] **Zwift video clips (F9 / “Video Screenshots”).** Zwift records clips through Media Foundation
+  (`IMFSinkWriter` → MP4). Under Wine 11.20 this cannot work (checked 2026-11-24 on tinytin, Zwift logs
+  from 12.–16.11.): the first clip fails with `IMFSinkWriter::Finalize failed, hr=0x80004001` (E_NOTIMPL),
+  the next nine with `CreateSinkWriter failed, hr=0x80070020` (sharing violation, the first file is still
+  open), after 10 `WindowsFailure`s Zwift turns the feature off (`Video Capture Feature Flag: DISABLED`).
+  Left behind: a 0-byte `AppData/Local/Temp/zwift_video_clip_0.mp4`. Cause in Wine `dlls/mfreadwrite/writer.c`:
+  `sink_writer_Finalize` is a stub, and `sink_writer_encode_sample` never runs the encoder (“FIXME: call
+  the encoder, queue its output”), so raw frames would reach the MP4 sink. Everything below exists:
+  H.264 encoder MFT (`winegstreamer/video_encoder.c` → GStreamer `x264enc`/`nvh264enc`, both in the
+  Flatpak), MP4 sink with `IMFFinalizableMediaSink` (`winegstreamer/media_sink.c`, `wg_muxer`).
+  - Option A: Wine patch in the Flatpak manifest (we build Wine from source): run converter + encoder in
+    the sink writer, drain on Finalize, then `BeginFinalize`/`EndFinalize` on the sink and shut it down.
+    Check upstream merge requests first; test with Zwift's own clip and photo button.
+  - Option B: Tretlager records itself (PipeWire screencast portal, NVENC/VA-API, ring buffer) and saves
+    the last N seconds on F9 or the watch's *Video clip* button – independent of Wine, but a new feature.
 - [ ] **MyWhoosh support.** Same workflow as for Zwift, only for MyWhoosh: system check, dependencies,
   download, installation, updates, setup in its own prefix. Start through Tretlager, with a choice
   between Zwift and MyWhoosh when both are installed.

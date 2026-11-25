@@ -1,0 +1,63 @@
+From fe6248813f08225a98b0fc8cd04c16566f97b006 Mon Sep 17 00:00:00 2001
+From: Tretlager <noreply@freiversum.de>
+Date: Wed, 25 Nov 2026 11:13:18 +0100
+Subject: [PATCH 15/16] winegstreamer: Queue each muxer input stream.
+
+mp4mux waits for data on every pad before it outputs anything, so the
+first video sample blocked the media sink thread that also delivers the
+audio samples.
+---
+ dlls/winegstreamer/wg_muxer.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/dlls/winegstreamer/wg_muxer.c b/dlls/winegstreamer/wg_muxer.c
+index 9a7ec59..a43e3ce 100644
+--- a/dlls/winegstreamer/wg_muxer.c
++++ b/dlls/winegstreamer/wg_muxer.c
+@@ -78,7 +78,7 @@ struct wg_muxer_stream
+ 
+     GstPad *my_src;
+     GstCaps *my_src_caps, *parser_src_caps;
+-    GstElement *parser;
++    GstElement *parser, *queue;
+     GstSegment segment;
+ 
+     struct list entry;
+@@ -380,6 +380,21 @@ NTSTATUS wg_muxer_add_stream(void *args)
+         gst_object_unref(parser_src);
+     }
+ 
++    /* Decouple the stream from the muxer. The muxer waits for data on every stream before it
++     * outputs anything, so a blocking push would stall the caller that also delivers the other
++     * streams' samples. */
++    if (!(stream->queue = create_element("queue", "core")))
++        goto out;
++    g_object_set(stream->queue, "max-size-buffers", 0, "max-size-bytes", 0, "max-size-time", (guint64)0, NULL);
++    if (!gst_bin_add(GST_BIN(muxer->container), stream->queue))
++    {
++        gst_object_unref(stream->queue);
++        goto out;
++    }
++    if (stream->parser ? !gst_element_link(stream->parser, stream->queue)
++            : !link_src_to_element(stream->my_src, stream->queue))
++        goto out;
++
+     /* Add to muxer stream list. */
+     list_add_tail(&muxer->streams, &stream->entry);
+ 
+@@ -424,11 +439,7 @@ NTSTATUS wg_muxer_start(void *args)
+     /* Link each stream to muxer element. */
+     LIST_FOR_EACH_ENTRY(stream, &muxer->streams, struct wg_muxer_stream, entry)
+     {
+-        bool link_ok = stream->parser ?
+-                gst_element_link(stream->parser, muxer->muxer) :
+-                link_src_to_element(stream->my_src, muxer->muxer);
+-
+-        if (!link_ok)
++        if (!gst_element_link(stream->queue, muxer->muxer))
+             return status;
+     }
+ 
+-- 
+2.53.0
+

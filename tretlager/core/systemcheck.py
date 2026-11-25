@@ -270,9 +270,10 @@ def wine_version(run=subprocess.run) -> str:
     if not exe:
         return ""
     try:
-        return run([exe, "--version"], capture_output=True, text=True, timeout=10).stdout.strip()
+        version = run([exe, "--version"], capture_output=True, text=True, timeout=10).stdout.strip()
     except (OSError, subprocess.TimeoutExpired):
         return ""
+    return wine.with_build(Path(exe).parent, version)
 
 
 def check_wine(root: Path = Path("/"), run=subprocess.run) -> Check:

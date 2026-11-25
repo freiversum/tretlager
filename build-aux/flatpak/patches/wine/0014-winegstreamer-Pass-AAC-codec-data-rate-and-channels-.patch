@@ -1,0 +1,109 @@
+From ec129d5ac55ebc09f4c462c5eac48aee8064fc17 Mon Sep 17 00:00:00 2001
+From: Tretlager <noreply@freiversum.de>
+Date: Wed, 25 Nov 2026 11:13:18 +0100
+Subject: [PATCH 14/16] winegstreamer: Pass AAC codec data, rate and channels
+ to the muxer.
+
+mf_media_type_to_wg_format() stored the AudioSpecificConfig without the
+HEAACWAVEINFO prefix that wg_format_to_caps_audio_mpeg4() skips, so the
+muxer got no codec_data. Keep the prefix, build an AAC-LC config when
+the type has none and add rate and channels to the caps.
+---
+ dlls/winegstreamer/mfplat.c    | 52 ++++++++++++++++++++++------------
+ dlls/winegstreamer/wg_format.c |  4 +++
+ 2 files changed, 38 insertions(+), 18 deletions(-)
+
+diff --git a/dlls/winegstreamer/mfplat.c b/dlls/winegstreamer/mfplat.c
+index d21baaf..44ed336 100644
+--- a/dlls/winegstreamer/mfplat.c
++++ b/dlls/winegstreamer/mfplat.c
+@@ -572,37 +572,53 @@ static void mf_media_type_to_wg_format_audio_mpeg_layer3(IMFMediaType *type, con
+ 
+ static void mf_media_type_to_wg_format_audio_mpeg4(IMFMediaType *type, const GUID *subtype, struct wg_format *format)
+ {
+-    BYTE buffer[sizeof(HEAACWAVEFORMAT) + 64];
+-    HEAACWAVEFORMAT *wfx = (HEAACWAVEFORMAT *)buffer;
+-    UINT32 codec_data_size;
++    static const UINT32 frequencies[] = {96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000, 7350};
++    static const size_t waveinfo_size = sizeof(HEAACWAVEINFO) - sizeof(WAVEFORMATEX);
++    UINT32 codec_data_size, rate = 0, channels = 0, index;
++    HEAACWAVEINFO info = {0};
+     BOOL raw_aac;
+ 
+-    wfx->wfInfo.wfx.cbSize = sizeof(buffer) - sizeof(wfx->wfInfo.wfx);
+-    if (FAILED(IMFMediaType_GetBlob(type, &MF_MT_USER_DATA, (BYTE *)(&wfx->wfInfo.wfx + 1),
+-            wfx->wfInfo.wfx.cbSize, &codec_data_size)))
++    IMFMediaType_GetUINT32(type, &MF_MT_AUDIO_SAMPLES_PER_SECOND, &rate);
++    IMFMediaType_GetUINT32(type, &MF_MT_AUDIO_NUM_CHANNELS, &channels);
++    raw_aac = IsEqualGUID(subtype, &MFAudioFormat_RAW_AAC);
++
++    /* codec_data holds the HEAACWAVEINFO fields followed by the AudioSpecificConfig,
++     * like wg_format_from_caps_audio_mpeg4() and wg_format_to_caps_audio_mpeg4() expect. */
++    if (raw_aac)
+     {
+-        FIXME("Codec data is not set.\n");
+-        return;
++        if (FAILED(IMFMediaType_GetBlob(type, &MF_MT_USER_DATA, format->u.audio.codec_data + waveinfo_size,
++                sizeof(format->u.audio.codec_data) - waveinfo_size, &codec_data_size)))
++            codec_data_size = 0;
++        memcpy(format->u.audio.codec_data, &info.wPayloadType, waveinfo_size);
++        codec_data_size += waveinfo_size;
+     }
++    else if (FAILED(IMFMediaType_GetBlob(type, &MF_MT_USER_DATA, format->u.audio.codec_data,
++            sizeof(format->u.audio.codec_data), &codec_data_size)))
++        codec_data_size = 0;
+ 
+-    raw_aac = IsEqualGUID(subtype, &MFAudioFormat_RAW_AAC);
+-    if (!raw_aac)
+-        codec_data_size -= min(codec_data_size, sizeof(HEAACWAVEINFO) - sizeof(WAVEFORMATEX));
+-    if (codec_data_size > sizeof(format->u.audio.codec_data))
++    if (codec_data_size <= waveinfo_size)
+     {
+-        FIXME("Codec data needs %u bytes.\n", codec_data_size);
+-        return;
++        for (index = 0; index < ARRAY_SIZE(frequencies); ++index)
++            if (frequencies[index] == rate) break;
++        if (index == ARRAY_SIZE(frequencies) || !channels || channels > 7)
++        {
++            FIXME("Codec data is not set.\n");
++            return;
++        }
++        /* AAC-LC AudioSpecificConfig from the sample rate and channel count. */
++        memcpy(format->u.audio.codec_data, &info.wPayloadType, waveinfo_size);
++        format->u.audio.codec_data[waveinfo_size] = (2 << 3) | (index >> 1);
++        format->u.audio.codec_data[waveinfo_size + 1] = ((index & 1) << 7) | (channels << 3);
++        codec_data_size = waveinfo_size + 2;
+     }
+-    if (raw_aac)
+-        memcpy(format->u.audio.codec_data, (BYTE *)(&wfx->wfInfo.wfx + 1), codec_data_size);
+-    else
+-        memcpy(format->u.audio.codec_data, wfx->pbAudioSpecificConfig, codec_data_size);
+ 
+     format->major_type = WG_MAJOR_TYPE_AUDIO_MPEG4;
+ 
+     if (FAILED(IMFMediaType_GetUINT32(type, &MF_MT_AAC_PAYLOAD_TYPE, &format->u.audio.payload_type)))
+         format->u.audio.payload_type = 0;
+ 
++    format->u.audio.rate = rate;
++    format->u.audio.channels = channels;
+     format->u.audio.codec_data_len = codec_data_size;
+ }
+ 
+diff --git a/dlls/winegstreamer/wg_format.c b/dlls/winegstreamer/wg_format.c
+index fce3d27..997f92e 100644
+--- a/dlls/winegstreamer/wg_format.c
++++ b/dlls/winegstreamer/wg_format.c
+@@ -781,6 +781,10 @@ static GstCaps *wg_format_to_caps_audio_mpeg4(const struct wg_format *format)
+         return NULL;
+ 
+     gst_caps_set_simple(caps, "mpegversion", G_TYPE_INT, 4, NULL);
++    if (format->u.audio.rate)
++        gst_caps_set_simple(caps, "rate", G_TYPE_INT, format->u.audio.rate, NULL);
++    if (format->u.audio.channels)
++        gst_caps_set_simple(caps, "channels", G_TYPE_INT, format->u.audio.channels, NULL);
+ 
+     switch (format->u.audio.payload_type)
+     {
+-- 
+2.53.0
+

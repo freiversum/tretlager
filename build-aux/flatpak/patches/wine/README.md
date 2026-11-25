@@ -17,6 +17,11 @@ after ten failures Zwift turns the feature off.
 | 0009 | Tretlager: `IMFByteStream::Close()` closes the file; with the stub the finished clip stayed locked, Zwift could not reopen it with a source reader (`SaveMovieReader`) and every next clip failed with a sharing violation |
 | 0010 | Tretlager: a sink writer shuts down the media sink it created itself when released; a writer that failed early (Zwift's save with an audio stream Wine cannot encode) kept the file locked |
 | 0011 | Tretlager: the GStreamer parser hands out packed 4:2:0 frames like Windows; Zwift reads its 1230×720 clip back for the thumbnail and rejected 1330560-byte frames (expected 1328400) |
+| 0012 | Tretlager: an AAC encoder MFT in winegstreamer on top of `avenc_aac` (16-bit PCM or float in, raw AAC-LC out, AudioSpecificConfig in `MF_MT_USER_DATA`); `avenc_aac` has no rank, so `wg_transform` falls back to it by name. Zwift saves every clip with an AAC audio stream |
+| 0013 | Tretlager: `msauddecmft` registers that encoder as `CLSID_AACMFTEncoder` in `MFT_CATEGORY_AUDIO_ENCODER`, where the sink writer looks for it (an existing DLL, so the build needs no `configure` change) |
+| 0014 | Tretlager: AAC types reach the MPEG-4 muxer with `codec_data`, rate and channels (the codec data lost its `HEAACWAVEINFO` prefix on the way, so mp4mux got none) |
+| 0015 | Tretlager: each muxer input stream gets a `queue`; mp4mux waits for data on every pad, so the first video sample blocked the thread that also delivers the audio samples (deadlock in `Finalize`) |
+| 0016 | Tretlager: each muxed stream starts at its first sample; GStreamer video encoders offset timestamps by 1000 hours, which mp4mux hides with video alone but not next to an audio stream starting at 0 (the video track started 20860 s into the file) |
 
 Test: a small MinGW program writes 30–90 frames through `MFCreateSinkWriterFromURL` and calls
 `Finalize()`, with NV12 and RGB32 input at 1280×720, 1440×843, 1235×701 and Zwift's case
@@ -24,6 +29,17 @@ Test: a small MinGW program writes 30–90 frames through `MFCreateSinkWriterFro
 valid files with correct duration, timestamps and image (a column gradient stays vertical);
 like Zwift, the test then reopens the clip with `MFCreateSourceReaderFromURL` and writes the next
 clip to the same path.
+
+Audio test: the same program adds an AAC stream (48 kHz stereo, 16-bit PCM or float, a 440 Hz tone
+or no samples at all); ffprobe shows H.264 and AAC tracks of equal length starting at 0, and the
+decoded tone is 440 Hz. With the real Zwift (2026-11-25, tinytin) `SaveMovieSuccess` and playable
+clips in `Videos/Zwift`. The registration happens when Wine updates the prefix (`wineboot`), which it
+does on its own after a Wine update.
+
+When the patches change, raise the patch level in the manifest (`post-install` of the wine module
+writes `/app/wine/share/tretlager-wine-build`, for example `patches 16`). Tretlager adds it to the
+Wine version and runs `wineboot -u` on existing environments; Wine cannot notice the update itself
+because all Flatpak files have the timestamp 0.
 
 When moving to a newer Wine: check whether upstream merged !10298 or implemented `Finalize`,
 then drop the matching patches.

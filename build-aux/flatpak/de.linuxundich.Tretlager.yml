@@ -68,6 +68,11 @@ modules:
       - LDCONFIG=/bin/true
       - UPDATE_DESKTOP_DATABASE=/bin/true
       - INSTALL_PROGRAM_FLAGS=-s
+    # Patch level: raise it whenever the Wine patches change, so Tretlager adapts existing
+    # environments (wineboot -u registers new DLLs; Flatpak files all have mtime 0, so Wine
+    # itself never notices an update). See tretlager/core/wine.py.
+    post-install:
+      - echo "patches 16" > /app/wine/share/tretlager-wine-build
     cleanup:
       - /wine/include
       - /wine/share/man
@@ -89,6 +94,11 @@ modules:
           - patches/wine/0009-mfplat-Close-the-file-handle-in-IMFByteStream-Close.patch
           - patches/wine/0010-mfreadwrite-Shut-down-a-media-sink-the-writer-create.patch
           - patches/wine/0011-winegstreamer-Pack-4-2-0-frames-from-the-parser-like.patch
+          - patches/wine/0012-winegstreamer-Add-an-AAC-encoder-transform.patch
+          - patches/wine/0013-msauddecmft-Register-the-AAC-encoder-as-CLSID_AACMFT.patch
+          - patches/wine/0014-winegstreamer-Pass-AAC-codec-data-rate-and-channels-.patch
+          - patches/wine/0015-winegstreamer-Queue-each-muxer-input-stream.patch
+          - patches/wine/0016-winegstreamer-Start-each-muxed-stream-at-its-first-s.patch
 
   - name: tretlager
     buildsystem: simple

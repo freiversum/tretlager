@@ -22,16 +22,30 @@ BUNDLED = Path("/app/wine")
 KEPT = paths.DATA / "wine-kept"
 _OLD_KEPT = paths.DATA / "wine-bewaehrt"  # name up to 0.9.x
 VERSION_FILE = "tretlager-wine-version"
+# Patch level of the bundled Wine, written by the Flatpak manifest. `wine --version` stays the same
+# when only the patches change, but the environment has to be adapted (`wineboot -u` registers new
+# DLLs) and the new build counts as a new version for the previous-version copy.
+BUILD_FILE = Path("share/tretlager-wine-build")
 GOOD_RIDES = 2  # number of rides until a new Wine counts as proven
 GOOD_RIDE_SECONDS = 5 * 60
 
 
+def with_build(bin_dir: Path, version: str) -> str:
+    """`wine --version` plus the patch level next to that Wine, e.g. "wine-11.20 (patches 16)"."""
+    try:
+        build = (bin_dir.parent / BUILD_FILE).read_text().strip()
+    except OSError:
+        build = ""
+    return f"{version} ({build})" if version and build else version
+
+
 def _version(bin_dir: Path) -> str:
     try:
-        return subprocess.run([str(bin_dir / "wine"), "--version"], capture_output=True, text=True,
-                              timeout=10).stdout.strip()
+        version = subprocess.run([str(bin_dir / "wine"), "--version"], capture_output=True, text=True,
+                                 timeout=10).stdout.strip()
     except (OSError, subprocess.TimeoutExpired):
         return ""
+    return with_build(bin_dir, version)
 
 
 def _adopt_old_copy() -> None:

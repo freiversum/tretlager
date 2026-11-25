@@ -33,6 +33,18 @@ def test_first_good_ride_keeps_a_copy(fake_wine):
     assert wine.record_ride(600) == ""  # already kept
 
 
+def test_patch_level_counts_as_new_version(fake_wine):
+    wine.record_ride(600)
+    assert wine.bundled_version() == "wine-11.20"
+    (wine.BUNDLED / "share").mkdir()
+    (wine.BUNDLED / wine.BUILD_FILE).write_text("patches 16\n")  # same Wine, new patches
+    wine.bundled_version.cache_clear()
+    assert wine.bundled_version() == "wine-11.20 (patches 16)"
+    assert wine.record_ride(600) == ""  # the old copy stays until the patched build has proven itself
+    assert wine.record_ride(600) == "wine-11.20 (patches 16)"
+    assert wine.kept_version() == "wine-11.20 (patches 16)"
+
+
 def test_new_wine_replaces_copy_only_after_two_rides(fake_wine):
     wine.record_ride(600)
     fake_wine("wine-11.21")  # Tretlager update

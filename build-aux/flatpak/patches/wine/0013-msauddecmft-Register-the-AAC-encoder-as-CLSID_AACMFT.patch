@@ -1,0 +1,111 @@
+From bfcdf866ee6506892f8b3c7e666e2280a77f85a2 Mon Sep 17 00:00:00 2001
+From: Tretlager <noreply@freiversum.de>
+Date: Wed, 25 Nov 2026 11:13:18 +0100
+Subject: [PATCH 13/16] msauddecmft: Register the AAC encoder as
+ CLSID_AACMFTEncoder.
+
+The sink writer finds encoders through MFTEnumEx; this registers the
+winegstreamer AAC encoder in MFT_CATEGORY_AUDIO_ENCODER.
+---
+ dlls/msauddecmft/msauddecmft.c   | 36 ++++++++++++++++++++++++++++++++
+ dlls/msauddecmft/msauddecmft.idl |  6 ++++++
+ 2 files changed, 42 insertions(+)
+
+diff --git a/dlls/msauddecmft/msauddecmft.c b/dlls/msauddecmft/msauddecmft.c
+index 813d813..a3be67b 100644
+--- a/dlls/msauddecmft/msauddecmft.c
++++ b/dlls/msauddecmft/msauddecmft.c
+@@ -25,6 +25,7 @@
+ 
+ #include "mfapi.h"
+ #include "mfidl.h"
++#include "wmcodecdsp.h"
+ #include "rpcproxy.h"
+ 
+ #include "wine/debug.h"
+@@ -71,6 +72,24 @@ static const IClassFactoryVtbl aac_decoder_factory_vtbl =
+ 
+ static IClassFactory aac_decoder_factory = {&aac_decoder_factory_vtbl};
+ 
++static HRESULT WINAPI aac_encoder_factory_CreateInstance(IClassFactory *iface, IUnknown *outer,
++        REFIID riid, void **out)
++{
++    static const GUID CLSID_wg_aac_encoder = {0x94fa4beb,0xef42,0x42b8,{0x8e,0xb7,0x17,0x2f,0xec,0x38,0xc2,0x11}};
++    return CoCreateInstance(&CLSID_wg_aac_encoder, outer, CLSCTX_INPROC_SERVER, riid, out);
++}
++
++static const IClassFactoryVtbl aac_encoder_factory_vtbl =
++{
++    class_factory_QueryInterface,
++    class_factory_AddRef,
++    class_factory_Release,
++    aac_encoder_factory_CreateInstance,
++    class_factory_LockServer,
++};
++
++static IClassFactory aac_encoder_factory = {&aac_encoder_factory_vtbl};
++
+ /***********************************************************************
+  *              DllGetClassObject (msauddecmft.@)
+  */
+@@ -78,6 +97,8 @@ HRESULT WINAPI DllGetClassObject(REFCLSID clsid, REFIID riid, void **out)
+ {
+     if (IsEqualGUID(clsid, &CLSID_MSAACDecMFT))
+         return IClassFactory_QueryInterface(&aac_decoder_factory, riid, out);
++    if (IsEqualGUID(clsid, &CLSID_AACMFTEncoder))
++        return IClassFactory_QueryInterface(&aac_encoder_factory, riid, out);
+ 
+     *out = NULL;
+     FIXME("Unknown clsid %s.\n", debugstr_guid(clsid));
+@@ -100,12 +121,25 @@ HRESULT WINAPI DllRegisterServer(void)
+         {MFMediaType_Audio, MFAudioFormat_Float},
+         {MFMediaType_Audio, MFAudioFormat_PCM},
+     };
++    MFT_REGISTER_TYPE_INFO aac_encoder_mft_inputs[] =
++    {
++        {MFMediaType_Audio, MFAudioFormat_PCM},
++    };
++    MFT_REGISTER_TYPE_INFO aac_encoder_mft_outputs[] =
++    {
++        {MFMediaType_Audio, MFAudioFormat_AAC},
++    };
+     HRESULT hr;
+ 
+     TRACE("\n");
+ 
+     if (FAILED(hr = __wine_register_resources()))
+         return hr;
++    if (FAILED(hr = MFTRegister(CLSID_AACMFTEncoder, MFT_CATEGORY_AUDIO_ENCODER,
++            (WCHAR *)L"Microsoft AAC Audio Encoder MFT", MFT_ENUM_FLAG_SYNCMFT,
++            ARRAY_SIZE(aac_encoder_mft_inputs), aac_encoder_mft_inputs,
++            ARRAY_SIZE(aac_encoder_mft_outputs), aac_encoder_mft_outputs, NULL)))
++        return hr;
+     if (FAILED(hr = MFTRegister(CLSID_MSAACDecMFT, MFT_CATEGORY_AUDIO_DECODER,
+             (WCHAR *)L"Microsoft AAC Audio Decoder MFT", MFT_ENUM_FLAG_SYNCMFT,
+             ARRAY_SIZE(aac_decoder_mft_inputs), aac_decoder_mft_inputs,
+@@ -128,6 +162,8 @@ HRESULT WINAPI DllUnregisterServer(void)
+         return hr;
+     if (FAILED(hr = MFTUnregister(CLSID_MSAACDecMFT)))
+         return hr;
++    if (FAILED(hr = MFTUnregister(CLSID_AACMFTEncoder)))
++        return hr;
+ 
+     return S_OK;
+ }
+diff --git a/dlls/msauddecmft/msauddecmft.idl b/dlls/msauddecmft/msauddecmft.idl
+index f1b2a62..709f5ea 100644
+--- a/dlls/msauddecmft/msauddecmft.idl
++++ b/dlls/msauddecmft/msauddecmft.idl
+@@ -23,3 +23,9 @@
+     uuid(32d186a7-218f-4c75-8876-dd77273a8999)
+ ]
+ coclass CMSAACDecMFT {}
++
++[
++    threading(both),
++    uuid(93af0c51-2275-45d2-a35b-f2ba21caed00)
++]
++coclass AACMFTEncoder {}
+-- 
+2.53.0
+

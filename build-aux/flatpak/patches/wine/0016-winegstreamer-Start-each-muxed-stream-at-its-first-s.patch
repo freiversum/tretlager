@@ -1,0 +1,48 @@
+From ccb5ae1a6ae008c6fc07d2f06de03f5ddd654d30 Mon Sep 17 00:00:00 2001
+From: Tretlager <noreply@freiversum.de>
+Date: Wed, 25 Nov 2026 11:13:18 +0100
+Subject: [PATCH 16/16] winegstreamer: Start each muxed stream at its first
+ sample.
+
+GStreamer video encoders offset their timestamps by 1000 hours. With
+video only mp4mux hides that, with an audio stream starting at zero the
+video track started 20860 s into the file.
+---
+ dlls/winegstreamer/wg_muxer.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/dlls/winegstreamer/wg_muxer.c b/dlls/winegstreamer/wg_muxer.c
+index a43e3ce..ae003a8 100644
+--- a/dlls/winegstreamer/wg_muxer.c
++++ b/dlls/winegstreamer/wg_muxer.c
+@@ -80,6 +80,8 @@ struct wg_muxer_stream
+     GstCaps *my_src_caps, *parser_src_caps;
+     GstElement *parser, *queue;
+     GstSegment segment;
++    bool has_first_pts;
++    INT64 first_pts;
+ 
+     struct list entry;
+ };
+@@ -492,8 +494,17 @@ NTSTATUS wg_muxer_push_sample(void *args)
+     GST_INFO("Copied %u bytes from sample %p to buffer %p.", sample->size, sample, buffer);
+ 
+     /* Set sample properties. */
++    /* Each stream starts at its first sample, like the native MPEG-4 sink does: Zwift writes
++     * video with a large time offset and audio from zero into the same file. */
+     if (sample->flags & WG_SAMPLE_FLAG_HAS_PTS)
+-        GST_BUFFER_PTS(buffer) = sample->pts * 100;
++    {
++        if (!stream->has_first_pts)
++        {
++            stream->first_pts = sample->pts;
++            stream->has_first_pts = true;
++        }
++        GST_BUFFER_PTS(buffer) = max(sample->pts - stream->first_pts, 0) * 100;
++    }
+     if (sample->flags & WG_SAMPLE_FLAG_HAS_DURATION)
+         GST_BUFFER_DURATION(buffer) = sample->duration * 100;
+     if (!(sample->flags & WG_SAMPLE_FLAG_SYNC_POINT))
+-- 
+2.53.0
+

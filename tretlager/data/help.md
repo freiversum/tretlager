@@ -30,7 +30,8 @@ rate strap.
 - **Photos and clips**: Zwift saves them inside the Wine environment. Under *Photos and clips after
   the ride* in the overview, Tretlager moves the ride's photos and clips to your Pictures and Videos
   folders (subfolder Zwift) after Zwift closes, or puts them in the trash if the photos on Zwift or
-  Strava are enough. Older files stay where they are.
+  Strava are enough. Older files stay where they are. Clips only have sound when the game sound is
+  switched on in Zwift's settings.
 - **Not for races with the sensor bridge**: Tretlager does not guarantee that the sensor bridge
   passes power, cadence and heart rate to Zwift correctly. Do not use the sensor bridge for races
   or competitions with results. With the Companion app the values do not pass through Tretlager.

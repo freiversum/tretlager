@@ -31,7 +31,8 @@ Pulsgurt.
 - **Fotos und Clips**: Zwift speichert sie in der Wine-Umgebung. Unter *Fotos und Clips nach der
   Fahrt* in der Übersicht verschiebt Tretlager die Fotos und Clips der Fahrt nach dem Beenden von
   Zwift in deine Ordner Bilder und Videos (Unterordner Zwift) oder in den Papierkorb, wenn dir die
-  Fotos auf Zwift oder Strava genügen. Ältere Dateien bleiben, wo sie sind.
+  Fotos auf Zwift oder Strava genügen. Ältere Dateien bleiben, wo sie sind. Ton haben die Clips nur,
+  wenn in Zwifts Einstellungen der Spielton eingeschaltet ist.
 - **Nicht für Rennen mit der Sensor-Bridge**: Tretlager garantiert nicht, dass die Sensor-Bridge
   Leistung, Trittfrequenz und Puls korrekt an Zwift weitergibt. An Rennen und Wettbewerben mit
   Wertung daher nicht mit der Sensor-Bridge teilnehmen. Mit der Companion App laufen die Werte

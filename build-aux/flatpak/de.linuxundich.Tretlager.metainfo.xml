@@ -25,6 +25,14 @@
   <url type="vcs-browser">https://github.com/freiversum/tretlager</url>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="0.14.0" date="2026-11-25">
+      <description>
+        <p>Zwift's video clips (F9) work: the bundled Wine records them smoothly at 24 frames per
+        second with sound. A new setting decides what happens with the ride's photos and clips after
+        Zwift closes: keep them, move them to the Pictures and Videos folders, or put them in the
+        trash. The watch app is now called Wristpilot.</p>
+      </description>
+    </release>
     <release version="0.13.0" date="2026-11-24">
       <description>
         <p>New page Watch remote: a Garmin watch or Edge bike computer running the ZWindoor app steers

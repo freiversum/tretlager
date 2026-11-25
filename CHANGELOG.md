@@ -4,21 +4,26 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
-### Changed
-- *Watch remote*: the watch app ZWindoor is now called Wristpilot. The vendored bridge core moved
-  to `tretlager/wristpilot` and is updated to the current Wristpilot core (Companion frame capture,
-  advertising name "Wristpilot").
+## [0.14.0] - 2026-11-25
 
 ### Added
 - *Photos and clips after the ride* (Overview, Zwift card): after Zwift ends, Tretlager leaves the
   ride's photos and clips where Zwift put them (default), moves them to the Pictures and Videos
   folders (subfolder Zwift), or puts them in the trash, for riders who only need them on Zwift or
-  Strava. Only files of that ride are touched; the trash goes through the desktop's Trash portal.
+  Strava. Only files of that ride are touched; the trash goes through the desktop's Trash portal or, where
+  that refuses, straight into the home trash.
   Buttons open the photo and clip folders.
 
+### Changed
+- *Watch remote*: the watch app ZWindoor is now called Wristpilot. The vendored bridge core moved
+  to `tretlager/wristpilot` and is updated to the current Wristpilot core (Companion frame capture,
+  advertising name "Wristpilot").
+- Watch remote: ZWindoor bridge core 0.2.0 (on Linux unchanged: BlueZ with the adapter's own address).
+- Watch remote: ZWindoor bridge core 0.1.1. Stopping the remote no longer fails after Bluetooth could not start.
+
 ### Fixed
-- Zwift's video clips (F9, *Video Screenshots*) work: the bundled Wine 11.20 gets five patches for
-  the Media Foundation sink writer (encoder in the write path, `Finalize()`, sample requests and a
+- Zwift's video clips (F9, *Video Screenshots*) work: the bundled Wine 11.20 gets 17 patches for
+  Media Foundation, starting with the sink writer (encoder in the write path, `Finalize()`, sample requests and a
   time segment in the MPEG-4 sink), see `build-aux/flatpak/patches/wine/`. Before, every clip failed,
   left a 0-byte file and Zwift switched the feature off after ten attempts.
   With an odd window size (for example mirrored displays, 1440×843) the video processor overran its
@@ -33,6 +38,7 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
   Zwift saves every clip with an AAC audio stream, which Wine could not encode: Wine now gets an AAC
   encoder on top of GStreamer's `avenc_aac`, and the MPEG-4 sink handles a video and an audio stream
   together (patches 0012–0016). The clips land in `Videos/Zwift` in the Wine prefix.
+  Clips have sound when the game sound is on in Zwift's settings.
   Clips no longer stutter: the H.264 encoder used B-frames on calm scenes, and without decoding
   timestamps the frames ended up spread over twice the time (about 11 instead of 24 frames per
   second, patch 0017).
@@ -40,10 +46,6 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
   (`wineboot -u`, which registers new Wine components such as the AAC encoder). The Wine version
   carries the patch level (for example “wine-11.20 (patches 17)”); in the Flatpak all files have the
   same timestamp, so Wine itself never noticed the update.
-
-### Changed
-- Watch remote: ZWindoor bridge core 0.2.0 (on Linux unchanged: BlueZ with the adapter's own address).
-- Watch remote: ZWindoor bridge core 0.1.1. Stopping the remote no longer fails after Bluetooth could not start.
 
 ## [0.13.0] - 2026-11-24
 

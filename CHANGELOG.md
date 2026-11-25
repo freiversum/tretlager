@@ -7,7 +7,7 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
 ### Added
 - *Watch remote*: steering in Zwift. The Wristpilot core now offers Zwift a virtual Elite Sterzo
   over DIRCON (port 36880, "STERZO SMART 5C91"); pair it once in Zwift under *Steering*. On the
-  watch's race page UP and START change lanes (Wristpilot core from its repository, not released yet).
+  watch's race page UP and START change lanes (Wristpilot core 0.4.0).
 
 ## [0.14.0] - 2026-11-25
 

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tretlager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-24 08:48+0100\n"
+"POT-Creation-Date: 2026-11-25 13:07+0100\n"
 "PO-Revision-Date: 2026-10-31 17:00+0100\n"
 "Last-Translator: Christoph Langner <mail@christoph-langner.de>\n"
 "Language-Team: German\n"
@@ -146,7 +146,7 @@ msgstr "Zwift starten"
 msgid "Adjusting the window"
 msgstr "Fenster anpassen"
 
-#: tretlager/core/launch.py:235 tretlager/kde/app.py:743
+#: tretlager/core/launch.py:235 tretlager/kde/app.py:773
 msgid "Zwift is running"
 msgstr "Zwift läuft"
 
@@ -700,67 +700,67 @@ msgstr "Download-Quellen nicht erreichbar"
 msgid "Zwift and GitHub reachable"
 msgstr "Zwift und GitHub erreichbar"
 
-#: tretlager/core/systemcheck.py:282
+#: tretlager/core/systemcheck.py:283
 #, python-brace-format
 msgid "{version}, included in the Flatpak"
 msgstr "{version}, im Flatpak enthalten"
 
-#: tretlager/core/systemcheck.py:283
+#: tretlager/core/systemcheck.py:284
 msgid "Wine is missing from the Flatpak – reinstall Tretlager"
 msgstr "Wine fehlt im Flatpak – Tretlager neu installieren"
 
-#: tretlager/core/systemcheck.py:285
+#: tretlager/core/systemcheck.py:286
 #, python-brace-format
 msgid "WineHQ package source: {state}"
 msgstr "WineHQ-Paketquelle: {state}"
 
-#: tretlager/core/systemcheck.py:285
+#: tretlager/core/systemcheck.py:286
 msgid "set up"
 msgstr "eingerichtet"
 
-#: tretlager/core/systemcheck.py:285
+#: tretlager/core/systemcheck.py:286
 msgid "missing"
 msgstr "fehlt"
 
-#: tretlager/core/systemcheck.py:286
+#: tretlager/core/systemcheck.py:287
 #, python-brace-format
 msgid "Wine: {version}"
 msgstr "Wine: {version}"
 
-#: tretlager/core/systemcheck.py:286
+#: tretlager/core/systemcheck.py:287
 msgid "not installed"
 msgstr "nicht installiert"
 
-#: tretlager/core/systemcheck.py:288
+#: tretlager/core/systemcheck.py:289
 #, python-brace-format
 msgid "{version} installed"
 msgstr "{version} installiert"
 
-#: tretlager/core/systemcheck.py:289
+#: tretlager/core/systemcheck.py:290
 msgid "Will be set up in the next step (WineHQ, about 290 MB)"
 msgstr "Wird im nächsten Schritt eingerichtet (WineHQ, etwa 290 MB)"
 
-#: tretlager/core/systemcheck.py:297
+#: tretlager/core/systemcheck.py:298
 msgid "Zwift is already set up"
 msgstr "Zwift ist schon eingerichtet"
 
-#: tretlager/core/systemcheck.py:297
+#: tretlager/core/systemcheck.py:298
 msgid "Launcher present, game still missing"
 msgstr "Launcher vorhanden, Spiel fehlt noch"
 
-#: tretlager/core/systemcheck.py:299
+#: tretlager/core/systemcheck.py:300
 msgid "Not set up yet – Tretlager takes care of it"
 msgstr "Noch nicht eingerichtet – das übernimmt Tretlager"
 
-#: tretlager/core/systemcheck.py:306 tretlager/core/systemcheck.py:307
+#: tretlager/core/systemcheck.py:307 tretlager/core/systemcheck.py:308
 msgid "Device announcement"
 msgstr "Geräte-Ankündigung"
 
-#: tretlager/core/systemcheck.py:306
+#: tretlager/core/systemcheck.py:307
 msgid "Avahi is running, Zwift can find the sensors"
 msgstr "Avahi läuft, Zwift kann die Sensoren finden"
 
-#: tretlager/core/systemcheck.py:308
+#: tretlager/core/systemcheck.py:309
 msgid ""
 "Avahi is not running – Zwift will not find the sensors. Remedy: install the "
 "avahi package and start the avahi-daemon service."
@@ -834,53 +834,73 @@ msgstr "Sensor-Bridge nach Update neu gestartet"
 msgid "Zwift ride"
 msgstr "Zwift-Fahrt"
 
-#: tretlager/kde/app.py:695
+#: tretlager/kde/app.py:704
+msgid "Zwift has not saved anything there yet"
+msgstr "Zwift hat dort noch nichts gespeichert"
+
+#: tretlager/kde/app.py:725
 msgid "valid"
 msgstr "gültig"
 
-#: tretlager/kde/app.py:695
+#: tretlager/kde/app.py:725
 msgid "renewed at start"
 msgstr "wird beim Start erneuert"
 
-#: tretlager/kde/app.py:696
+#: tretlager/kde/app.py:726
 msgid "expired – please sign in again"
 msgstr "abgelaufen – bitte neu anmelden"
 
-#: tretlager/kde/app.py:697
+#: tretlager/kde/app.py:727
 msgid "not signed in"
 msgstr "nicht angemeldet"
 
-#: tretlager/kde/app.py:700
+#: tretlager/kde/app.py:730
 #, python-brace-format
 msgid ", renewal for {n} more day"
 msgid_plural ", renewal for {n} more days"
 msgstr[0] ", Erneuerung noch {n} Tag"
 msgstr[1] ", Erneuerung noch {n} Tage"
 
-#: tretlager/kde/app.py:719
+#: tretlager/kde/app.py:749
 msgid "Preparing the start"
 msgstr "Start vorbereiten"
 
-#: tretlager/kde/app.py:740
+#: tretlager/kde/app.py:770
 #, python-brace-format
 msgid "Unexpected error ({name})"
 msgstr "Unerwarteter Fehler ({name})"
 
-#: tretlager/kde/app.py:761
+#: tretlager/kde/app.py:792
 #, python-brace-format
 msgid "{version} kept as the proven Wine version"
 msgstr "{version} als bewährte Wine-Version aufbewahrt"
 
-#: tretlager/kde/app.py:764
+#: tretlager/kde/app.py:795
 msgid "Zwift closed"
 msgstr "Zwift beendet"
 
-#: tretlager/kde/app.py:782
+#: tretlager/kde/app.py:814
+msgid "Could not handle Zwift's photos and clips"
+msgstr "Zwifts Fotos und Clips konnten nicht verarbeitet werden"
+
+#: tretlager/kde/app.py:820
+#, python-brace-format
+msgid ""
+"Moved {photos} photos and {clips} clips to your Pictures and Videos folders"
+msgstr ""
+"{photos} Fotos und {clips} Clips in die Ordner Bilder und Videos verschoben"
+
+#: tretlager/kde/app.py:821
+#, python-brace-format
+msgid "Moved {photos} photos and {clips} clips to the trash"
+msgstr "{photos} Fotos und {clips} Clips in den Papierkorb verschoben"
+
+#: tretlager/kde/app.py:829
 #, python-brace-format
 msgid "NVIDIA driver reported {errors}"
 msgstr "NVIDIA-Treiber meldete {errors}"
 
-#: tretlager/kde/app.py:842
+#: tretlager/kde/app.py:889
 #, python-brace-format
 msgid "Could not save the error report ({name})."
 msgstr "Der Fehlerbericht konnte nicht gespeichert werden ({name})."
@@ -1491,7 +1511,7 @@ msgstr "Hilfe"
 msgid "Log"
 msgstr "Protokoll"
 
-#: tretlager/kde/qml/LoginPage.qml:10 tretlager/kde/qml/MainPage.qml:274
+#: tretlager/kde/qml/LoginPage.qml:10 tretlager/kde/qml/MainPage.qml:303
 msgid "Sign-in"
 msgstr "Anmeldung"
 
@@ -1987,7 +2007,51 @@ msgstr ""
 "Solange Zwift läuft, wird der Bildschirm nicht dunkler, schaltet nicht ab "
 "und sperrt nicht – auch nicht in einer Pause."
 
+#: tretlager/kde/qml/MainPage.qml:275
+msgid "Photos and clips after the ride"
+msgstr "Fotos und Clips nach der Fahrt"
+
+#: tretlager/kde/qml/MainPage.qml:276
+msgid "They stay in Zwift's own folder in the Wine environment."
+msgstr "Sie bleiben in Zwifts eigenem Ordner in der Wine-Umgebung."
+
+#: tretlager/kde/qml/MainPage.qml:277
+msgid "They are moved to %1 and %2."
+msgstr "Sie werden nach %1 und %2 verschoben."
+
 #: tretlager/kde/qml/MainPage.qml:278
+msgid ""
+"Zwift has already uploaded the photos to Zwift or Strava. Photos and clips "
+"of the ride go to the trash."
+msgstr ""
+"Zwift hat die Fotos schon zu Zwift bzw. Strava hochgeladen. Fotos und Clips "
+"der Fahrt kommen in den Papierkorb."
+
+#: tretlager/kde/qml/MainPage.qml:280
+msgid "Keep with Zwift"
+msgstr "Bei Zwift lassen"
+
+#: tretlager/kde/qml/MainPage.qml:280
+msgid "Move to Pictures and Videos"
+msgstr "In Bilder und Videos ablegen"
+
+#: tretlager/kde/qml/MainPage.qml:280
+msgid "Move to the trash"
+msgstr "In den Papierkorb"
+
+#: tretlager/kde/qml/MainPage.qml:296
+msgid "Open folder"
+msgstr "Ordner öffnen"
+
+#: tretlager/kde/qml/MainPage.qml:297
+msgid "Photos"
+msgstr "Fotos"
+
+#: tretlager/kde/qml/MainPage.qml:298
+msgid "Clips"
+msgstr "Clips"
+
+#: tretlager/kde/qml/MainPage.qml:307
 msgid ""
 "The official sign-in does not work on Linux, so it runs through a separate "
 "sign-in window. This contradicts Zwift's terms of service. The session is "
@@ -1997,11 +2061,11 @@ msgstr ""
 "über ein eigenes Anmeldefenster. Das widerspricht den Zwift-"
 "Nutzungsbedingungen. Die Sitzung liegt nur im Schlüsselbund dieses Rechners."
 
-#: tretlager/kde/qml/MainPage.qml:283
+#: tretlager/kde/qml/MainPage.qml:312
 msgid "Sign in again…"
 msgstr "Neu anmelden …"
 
-#: tretlager/kde/qml/MainPage.qml:290
+#: tretlager/kde/qml/MainPage.qml:319
 msgid "Log of the last start…"
 msgstr "Protokoll des letzten Starts …"
 

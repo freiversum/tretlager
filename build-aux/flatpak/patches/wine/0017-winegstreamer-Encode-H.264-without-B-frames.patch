@@ -1,0 +1,55 @@
+From 43b3d2efe4bebbfd1dd8a773f1b11bf48e3d882b Mon Sep 17 00:00:00 2001
+From: Tretlager <noreply@freiversum.de>
+Date: Wed, 25 Nov 2026 12:57:23 +0100
+Subject: [PATCH] winegstreamer: Encode H.264 without B-frames.
+
+Media Foundation samples carry no decoding timestamp, so the sink writer
+hands the muxer reordered presentation timestamps and mp4mux stretches
+the timeline. x264enc used B-frames on mostly static content; Zwift
+clips played at about 11 of 24 frames per second. The native encoder
+uses no B-frames by default.
+---
+ dlls/winegstreamer/wg_transform.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/dlls/winegstreamer/wg_transform.c b/dlls/winegstreamer/wg_transform.c
+index 75c6a2a..6c3f35c 100644
+--- a/dlls/winegstreamer/wg_transform.c
++++ b/dlls/winegstreamer/wg_transform.c
+@@ -685,6 +685,24 @@ static bool transform_create_converter_elements(struct wg_transform *transform,
+     return true;
+ }
+ 
++/* Media Foundation samples carry no decoding timestamp, so encoded video must come out in
++ * presentation order. The native H.264 encoder uses no B-frames by default either. */
++static void disable_b_frames(GstElement *element)
++{
++    static const char *const names[] = {"bframes", "b-frames", "max-bframes"};
++    GObjectClass *class = G_OBJECT_GET_CLASS(element);
++    unsigned int i;
++
++    if (g_object_class_find_property(class, "b-adapt"))
++        g_object_set(element, "b-adapt", FALSE, NULL);
++    for (i = 0; i < ARRAY_SIZE(names); ++i)
++    {
++        GParamSpec *spec = g_object_class_find_property(class, names[i]);
++        if (spec && (spec->value_type == G_TYPE_UINT || spec->value_type == G_TYPE_INT))
++            gst_util_set_object_arg(G_OBJECT(element), names[i], "0");
++    }
++}
++
+ static bool transform_create_encoder_element(struct wg_transform *transform,
+         const gchar *output_mime, GstElement **first, GstElement **last)
+ {
+@@ -697,6 +715,8 @@ static bool transform_create_encoder_element(struct wg_transform *transform,
+     /* avenc_aac is the only AAC encoder in many installations but has no rank. */
+     if (!element && !strcmp(output_mime, "audio/mpeg"))
+         element = create_element("avenc_aac", "libav");
++    if (element && !strcmp(output_mime, "video/x-h264"))
++        disable_b_frames(element);
+     return element && append_element(transform->container, element, first, last);
+ }
+ 
+-- 
+2.53.0
+

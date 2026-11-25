@@ -30,6 +30,11 @@ finish-args:
   - --talk-name=org.kde.KWin
   # XWayland scaling for the DPI of the Wine windows (read-only)
   - --filesystem=xdg-config/kwinrc:ro
+  # Zwift's photos and clips after the ride, if the user chooses to move them there (core/media.py)
+  - --filesystem=xdg-pictures/Zwift:create
+  - --filesystem=xdg-videos/Zwift:create
+  # ... or puts them in the trash when the Trash portal refuses (it did on tinytin, TUXEDO OS with Plasma)
+  - --filesystem=xdg-data/Trash:create
   - --env=PATH=/app/wine/bin:/app/bin:/usr/bin
   # Sign-in window: WebEngine from the BaseApp, otherwise Qt looks for the helper process only under /usr (crash)
   - --env=QTWEBENGINEPROCESS_PATH=/app/bin/QtWebEngineProcess
@@ -72,7 +77,7 @@ modules:
     # environments (wineboot -u registers new DLLs; Flatpak files all have mtime 0, so Wine
     # itself never notices an update). See tretlager/core/wine.py.
     post-install:
-      - echo "patches 16" > /app/wine/share/tretlager-wine-build
+      - echo "patches 17" > /app/wine/share/tretlager-wine-build
     cleanup:
       - /wine/include
       - /wine/share/man
@@ -99,6 +104,7 @@ modules:
           - patches/wine/0014-winegstreamer-Pass-AAC-codec-data-rate-and-channels-.patch
           - patches/wine/0015-winegstreamer-Queue-each-muxer-input-stream.patch
           - patches/wine/0016-winegstreamer-Start-each-muxed-stream-at-its-first-s.patch
+          - patches/wine/0017-winegstreamer-Encode-H.264-without-B-frames.patch
 
   - name: tretlager
     buildsystem: simple

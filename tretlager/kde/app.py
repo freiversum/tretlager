@@ -15,7 +15,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 from .. import APP_ID, __version__, build_id
 from . import desktopstyle, zwiftwindow
 from .i18n import LocalizedContext
-from ..core import applog, awake, bridgectl, btcompat, debug, display, gnomealive, helpdoc, instance, launch, login, power, prepare, report, setup, state, systemcheck, watchremote, wine
+from ..core import applog, awake, bridgectl, btcompat, debug, display, gnomealive, helpdoc, instance, launch, login, media, power, prepare, report, setup, state, systemcheck, watchremote, wine
 from ..i18n import LANGUAGE, _, ngettext
 
 # Embedded sign-in (as in the official launcher): needs QtWebEngine. Without the module,
@@ -676,6 +676,36 @@ class Backend(QObject):
         self.keepScreenOnChanged.emit()
         self._update_awake()
 
+    # --- Zwift's photos and clips after the ride ---
+
+    mediaModeChanged = Signal()
+
+    @Property(str, notify=mediaModeChanged)
+    def mediaMode(self) -> str:
+        return media.mode()
+
+    @Slot(str)
+    def setMediaMode(self, value: str) -> None:
+        media.set_mode(value)
+        applog.info("Photos and clips after the ride: %s", media.mode())
+        self.mediaModeChanged.emit()
+
+    @Property(list, notify=mediaModeChanged)
+    def mediaTargets(self) -> list:
+        """Pictures/Zwift and Videos/Zwift in the user's folders, home shortened to ~."""
+        home = str(Path.home())
+        return [str(media.target(k)).replace(home, "~", 1) for k in ("pictures", "videos")]
+
+    @Slot(str)
+    def openMediaFolder(self, kind: str) -> None:
+        """Open where the photos or clips are: the user's folder when moving, otherwise Zwift's."""
+        folder = media.target(kind) if media.mode() == "move" else next(iter(media.zwift_folders()[kind]), None)
+        if folder is None:
+            self._launchEvent.emit({"logline": _("Zwift has not saved anything there yet")})
+            return
+        folder.mkdir(parents=True, exist_ok=True)
+        QDesktopServices.openUrl(QUrl.fromLocalFile(str(folder)))
+
     @Slot()
     def refreshOverview(self) -> None:
         def work():
@@ -754,6 +784,7 @@ class Backend(QObject):
                     pass
             applog.info("Zwift ended, cleaning up")
             self._after_exit_quietly(launcher)
+            self._handle_media(started_at)
             try:  # if the bundled Wine has proven itself, it becomes the kept version
                 kept = wine.record_ride(time.monotonic() - ride_start)
                 if kept:
@@ -773,6 +804,22 @@ class Backend(QObject):
             launcher.after_exit()
         except Exception as e:  # cleanup is optional; errors go to the log only
             applog.warning("Cleanup after Zwift: %s", type(e).__name__)
+
+    def _handle_media(self, since: float) -> None:
+        """Move the ride's photos and clips or put them in the trash, as set (worker thread)."""
+        try:
+            done = media.after_ride(since)
+        except OSError as e:
+            applog.warning("Photos and clips: %s", type(e).__name__)
+            self._launchEvent.emit({"logline": _("Could not handle Zwift's photos and clips")})
+            return
+        photos, clips = done["pictures"], done["videos"]
+        if not photos and not clips:
+            return
+        applog.info("Photos and clips after the ride (%s): %d photos, %d clips", media.mode(), photos, clips)
+        text = (_("Moved {photos} photos and {clips} clips to your Pictures and Videos folders")
+                if media.mode() == "move" else _("Moved {photos} photos and {clips} clips to the trash"))
+        self._launchEvent.emit({"logline": text.format(photos=photos, clips=clips)})
 
     def _report_gpu_errors(self, since: float) -> None:
         """After the ride: did the NVIDIA driver report errors? (runs in the worker thread)"""

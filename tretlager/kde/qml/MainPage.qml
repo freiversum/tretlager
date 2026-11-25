@@ -270,6 +270,35 @@ ColumnsPage {
                 onToggled: backend.setKeepScreenOn(checked)
             }
             FormCard.FormDelegateSeparator {}
+            FormCard.FormComboBoxDelegate {
+                readonly property var modes: ["keep", "move", "trash"]
+                text: i18n("Photos and clips after the ride")
+                description: [i18n("They stay in Zwift's own folder in the Wine environment."),
+                              i18n("They are moved to %1 and %2.", backend.mediaTargets[0], backend.mediaTargets[1]),
+                              i18n("Zwift has already uploaded the photos to Zwift or Strava. Photos and clips of the ride go to the trash.")][Math.max(0, currentIndex)]
+                icon.name: "folder-pictures"
+                model: [i18n("Keep with Zwift"), i18n("Move to Pictures and Videos"), i18n("Move to the trash")]
+                currentIndex: modes.indexOf(backend.mediaMode)
+                onActivated: index => backend.setMediaMode(modes[index])
+            }
+            FormCard.FormDelegateSeparator { visible: backend.mediaMode !== "trash" }
+            FormCard.AbstractFormDelegate {
+                visible: backend.mediaMode !== "trash"
+                background: null
+                contentItem: RowLayout {
+                    spacing: Kirigami.Units.smallSpacing
+                    Kirigami.Icon {
+                        source: "folder-open"
+                        Layout.preferredWidth: Kirigami.Units.iconSizes.small
+                        Layout.preferredHeight: Kirigami.Units.iconSizes.small
+                        Layout.rightMargin: Kirigami.Units.largeSpacing
+                    }
+                    Controls.Label { text: i18n("Open folder"); Layout.fillWidth: true; elide: Text.ElideRight }
+                    Controls.Button { text: i18n("Photos"); icon.name: "folder-pictures"; onClicked: backend.openMediaFolder("pictures") }
+                    Controls.Button { text: i18n("Clips"); icon.name: "folder-videos"; onClicked: backend.openMediaFolder("videos") }
+                }
+            }
+            FormCard.FormDelegateSeparator {}
             FormCard.FormTextDelegate {
                 text: i18n("Sign-in")
                 description: page.la.login || "…"

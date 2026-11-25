@@ -27,6 +27,10 @@ rate strap.
   centre or `flatpak update`. Tretlager keeps the last proven Wine version; if Zwift runs worse after
   an update, switch on *Use previous Wine version* in the overview.
 - **During the ride**: Tretlager waits minimised and tidies up after Zwift closes.
+- **Photos and clips**: Zwift saves them inside the Wine environment. Under *Photos and clips after
+  the ride* in the overview, Tretlager moves the ride's photos and clips to your Pictures and Videos
+  folders (subfolder Zwift) after Zwift closes, or puts them in the trash if the photos on Zwift or
+  Strava are enough. Older files stay where they are.
 - **Not for races with the sensor bridge**: Tretlager does not guarantee that the sensor bridge
   passes power, cadence and heart rate to Zwift correctly. Do not use the sensor bridge for races
   or competitions with results. With the Companion app the values do not pass through Tretlager.

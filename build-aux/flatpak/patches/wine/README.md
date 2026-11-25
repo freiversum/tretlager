@@ -22,6 +22,7 @@ after ten failures Zwift turns the feature off.
 | 0014 | Tretlager: AAC types reach the MPEG-4 muxer with `codec_data`, rate and channels (the codec data lost its `HEAACWAVEINFO` prefix on the way, so mp4mux got none) |
 | 0015 | Tretlager: each muxer input stream gets a `queue`; mp4mux waits for data on every pad, so the first video sample blocked the thread that also delivers the audio samples (deadlock in `Finalize`) |
 | 0016 | Tretlager: each muxed stream starts at its first sample; GStreamer video encoders offset timestamps by 1000 hours, which mp4mux hides with video alone but not next to an audio stream starting at 0 (the video track started 20860 s into the file) |
+| 0017 | Tretlager: H.264 encoders run without B-frames, like the native encoder by default. Media Foundation samples carry no decoding timestamp, so with B-frames (x264enc on mostly static content) the muxer got reordered timestamps and stretched the timeline; Zwift clips played at about 11 of 24 frames per second |
 
 Test: a small MinGW program writes 30–90 frames through `MFCreateSinkWriterFromURL` and calls
 `Finalize()`, with NV12 and RGB32 input at 1280×720, 1440×843, 1235×701 and Zwift's case
@@ -37,7 +38,7 @@ clips in `Videos/Zwift`. The registration happens when Wine updates the prefix (
 does on its own after a Wine update.
 
 When the patches change, raise the patch level in the manifest (`post-install` of the wine module
-writes `/app/wine/share/tretlager-wine-build`, for example `patches 16`). Tretlager adds it to the
+writes `/app/wine/share/tretlager-wine-build`, for example `patches 17`). Tretlager adds it to the
 Wine version and runs `wineboot -u` on existing environments; Wine cannot notice the update itself
 because all Flatpak files have the timestamp 0.
 

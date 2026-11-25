@@ -4,6 +4,13 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+### Added
+- *Photos and clips after the ride* (Overview, Zwift card): after Zwift ends, Tretlager leaves the
+  ride's photos and clips where Zwift put them (default), moves them to the Pictures and Videos
+  folders (subfolder Zwift), or puts them in the trash, for riders who only need them on Zwift or
+  Strava. Only files of that ride are touched; the trash goes through the desktop's Trash portal.
+  Buttons open the photo and clip folders.
+
 ### Fixed
 - Zwift's video clips (F9, *Video Screenshots*) work: the bundled Wine 11.20 gets five patches for
   the Media Foundation sink writer (encoder in the write path, `Finalize()`, sample requests and a
@@ -21,9 +28,12 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
   Zwift saves every clip with an AAC audio stream, which Wine could not encode: Wine now gets an AAC
   encoder on top of GStreamer's `avenc_aac`, and the MPEG-4 sink handles a video and an audio stream
   together (patches 0012–0016). The clips land in `Videos/Zwift` in the Wine prefix.
+  Clips no longer stutter: the H.264 encoder used B-frames on calm scenes, and without decoding
+  timestamps the frames ended up spread over twice the time (about 11 instead of 24 frames per
+  second, patch 0017).
 - A Tretlager update that only changes the Wine patches now adapts the Zwift environment too
   (`wineboot -u`, which registers new Wine components such as the AAC encoder). The Wine version
-  carries the patch level (for example “wine-11.20 (patches 16)”); in the Flatpak all files have the
+  carries the patch level (for example “wine-11.20 (patches 17)”); in the Flatpak all files have the
   same timestamp, so Wine itself never noticed the update.
 
 ### Changed

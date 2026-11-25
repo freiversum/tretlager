@@ -4,7 +4,7 @@ import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.formcard as FormCard
 
-// Watch remote (ZWindoor): a Garmin watch steers Zwift – turns, Ride On, power-up.
+// Watch remote (Wristpilot): a Garmin watch steers Zwift – turns, Ride On, power-up.
 ColumnsPage {
     id: page
     title: i18n("Watch remote")
@@ -63,7 +63,7 @@ ColumnsPage {
             FormCard.FormTextDelegate {
                 text: i18n("Watch")
                 icon.name: page.wr.watch ? "data-success" : "network-disconnect"
-                description: page.wr.watch ? i18n("connected") : i18n("not connected – start ZWindoor on the watch")
+                description: page.wr.watch ? i18n("connected") : i18n("not connected – start Wristpilot on the watch")
             }
             FormCard.FormDelegateSeparator {}
             FormCard.FormTextDelegate {
@@ -192,8 +192,8 @@ ColumnsPage {
         FormCard.FormHeader { title: i18n("Set up the watch") },
         FormCard.FormCard {
             FormCard.FormTextDelegate {
-                text: i18n("Install ZWindoor on the watch")
-                description: i18n("Copy zwindoor.prg to the folder GARMIN/APPS on the watch (USB), then start ZWindoor from the apps list. It finds this computer by itself.")
+                text: i18n("Install Wristpilot on the watch")
+                description: i18n("Copy wristpilot.prg to the folder GARMIN/APPS on the watch (USB), then start Wristpilot from the apps list. It finds this computer by itself.")
                 icon.name: "smartphone"
             }
         }

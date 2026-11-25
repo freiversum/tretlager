@@ -16,11 +16,13 @@ undocumented relay contradicts Zwift's terms of service.
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import socket
 import struct
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Callable
 
 from . import actions, pb, zwiftapi
@@ -47,7 +49,7 @@ SUB_LEFT, SUB_STRAIGHT, SUB_RIGHT, SUB_HUD_ON, SUB_HUD_OFF = 1010, 1011, 1012, 1
 START_CONNECTED_SESSION, ACTION_BAR_OPEN = 5, 10
 RIDE_ON_SOCIAL = 2
 
-# Zwift POWERUP_TYPE (powerUpId - 1) -> ZWindoor power-up id (watch: Protocol.PU_*)
+# Zwift POWERUP_TYPE (powerUpId - 1) -> Wristpilot power-up id (watch: Protocol.PU_*)
 PU_NONE, PU_UNKNOWN = 0, 10
 POWERUPS = {0: 1, 1: 2, 2: 9, 3: 9, 4: 5, 5: 3, 6: 4, 7: 6, 8: 7}  # feather, draft, XP, burrito, aero, ghost …
 
@@ -84,7 +86,7 @@ class GameState:
 
 
 def command_for(action: int, value: int, hud_on: bool = True) -> dict | None:
-    """CompanionToGameCommand fields for a ZWindoor action, or None if the game has no command."""
+    """CompanionToGameCommand fields for a Wristpilot action, or None if the game has no command."""
     simple = {actions.U_TURN: CMD_U_TURN, actions.POWERUP: CMD_POWERUP, actions.BELL: CMD_BELL}
     if action in simple:
         t = simple[action]
@@ -115,7 +117,7 @@ class CompanionLink:
 
     def __init__(self, token_provider: Callable[[], str | None], port: int = 21587,
                  address: str | None = None, on_change: Callable[[], None] | None = None,
-                 api=zwiftapi) -> None:
+                 api=zwiftapi, capture: Path | None = None) -> None:
         self.token_provider = token_provider   # blocking; returns a valid access token or None
         self.port = port
         self.address = address
@@ -131,6 +133,7 @@ class CompanionLink:
         self._tasks: list[asyncio.Task] = []
         self._seqno = 0       # outer CompanionToGame.seqno
         self._cmd_seqno = 0   # per-command seqno
+        self.capture = capture  # JSON Lines file with every frame (tools/companion_dump.py reads it)
 
     # --- Lifecycle ---
 
@@ -210,7 +213,9 @@ class CompanionLink:
                 size = struct.unpack(">I", await reader.readexactly(4))[0]
                 if size > MAX_FRAME:
                     raise ConnectionError(f"frame of {size} bytes")
-                self.handle_game_message(await reader.readexactly(size))
+                data = await reader.readexactly(size)
+                self._capture("game", data)
+                self.handle_game_message(data)
         except (asyncio.IncompleteReadError, ConnectionError, OSError, pb.DecodeError) as e:
             log.info("Companion: game connection closed (%s)", e.__class__.__name__)
         finally:
@@ -220,6 +225,18 @@ class CompanionLink:
                 self._set_linked(False)
             writer.close()
 
+    def _capture(self, direction: str, data: bytes) -> None:
+        """Append one frame to the capture file: what the game really sends is still unverified."""
+        if not self.capture:
+            return
+        line = json.dumps({"t": round(time.time(), 3), "dir": direction, "hex": data.hex()})
+        try:
+            with self.capture.open("a", encoding="utf-8") as f:
+                f.write(line + "\n")
+        except OSError as e:
+            log.warning("Companion: capture to %s failed (%s), stopped", self.capture, e)
+            self.capture = None
+
     def _set_linked(self, on: bool) -> None:
         if self.state.linked != on:
             self.state = GameState(linked=on)
@@ -227,7 +244,7 @@ class CompanionLink:
 
     async def _pair(self) -> None:
         """What Sauce sends after the game connected: client info, pairing, session start, action bar."""
-        info = {1: CLIENT_INFO, 5: {1: "3.81.0", 2: "14", 3: "Android", 4: "Zwindoor", 5: {1: False, 2: False},
+        info = {1: CLIENT_INFO, 5: {1: "3.81.0", 2: "14", 3: "Android", 4: "Wristpilot", 5: {1: False, 2: False},
                                    6: "en_US", 7: 1}}
         await self._send([{2: CMD_PACKET, 21: info}])
         await self._send([{2: CMD_PAIRING, 19: self.athlete_id}])
@@ -249,6 +266,8 @@ class CompanionLink:
             cmds.append({1: self._cmd_seqno, **c})
         self._seqno += 1
         msg = pb.message({1: self.athlete_id, 2: cmds, 10: self._seqno})
+        if cmds:   # heartbeats (no commands) would only fill the file
+            self._capture("bridge", msg)
         try:
             writer.write(frame(msg))
             await writer.drain()
@@ -257,7 +276,7 @@ class CompanionLink:
         return True
 
     async def command(self, action: int, value: int) -> bool | None:
-        """Send a ZWindoor action to the game. None = the game has no such command (use the keyboard)."""
+        """Send a Wristpilot action to the game. None = the game has no such command (use the keyboard)."""
         cmd = command_for(action, value, self.hud_on)
         if cmd is None:
             return None

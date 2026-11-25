@@ -1,4 +1,4 @@
-"""Bridge settings, stored as JSON (Windows: %APPDATA%\\Zwindoor, Linux: ~/.config/zwindoor).
+"""Bridge settings, stored as JSON (Windows: %APPDATA%\\Wristpilot, Linux: ~/.config/wristpilot).
 
 Tretlager passes its own path so that the setting lives with its other state.
 """
@@ -14,9 +14,9 @@ from pathlib import Path
 
 def default_path() -> Path:
     if sys.platform == "win32":
-        base = Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")) / "Zwindoor"
+        base = Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")) / "Wristpilot"
     else:
-        base = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "zwindoor"
+        base = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "wristpilot"
     return base / "config.json"
 
 
@@ -31,6 +31,7 @@ class Config:
     keys: dict[str, str] = field(default_factory=dict)  # action slug -> key name ("" = no key)
     companion: bool = False         # act as Zwift Companion: game state to the watch, commands without keyboard
     companion_port: int = 21587     # TCP port the game connects to (Zwift's default for the Companion app)
+    companion_capture: str = ""     # file that records every Companion frame (JSON Lines), empty = off
     adapter: str = ""               # BlueZ adapter (hciN), empty = default
     autostart: bool = False         # Windows: start with the user session
 

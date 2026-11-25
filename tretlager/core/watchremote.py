@@ -1,8 +1,8 @@
-"""Watch remote: a Garmin watch running the ZWindoor app steers Zwift (turns, Ride On, power-up …).
+"""Watch remote: a Garmin watch running the Wristpilot app steers Zwift (turns, Ride On, power-up …).
 
 The watch can only act as a Bluetooth LE central, so Tretlager offers a small GATT service on the
 same adapter the sensor bridge uses and types the matching Zwift keyboard shortcuts into the Wine
-window via XTest. The core comes from the ZWindoor project (tretlager/zwindoor, vendored).
+window via XTest. The core comes from the Wristpilot project (tretlager/wristpilot, vendored).
 
 Runs inside the interface process (not in the sensor bridge): it needs the X11 display Wine uses,
 and it also works when the sensors come through the Zwift Companion app. Off by default; the
@@ -21,7 +21,7 @@ from . import applog, bridgectl, login, paths, state
 CONFIG_FILE = paths.STATE / "watch-remote.json"
 HISTORY = 5
 
-# Buttons on the page "Watch remote" -> (action, value) of the ZWindoor protocol
+# Buttons on the page "Watch remote" -> (action, value) of the Wristpilot protocol
 TEST_ACTIONS = {
     "left": (0x18, 1), "right": (0x19, 1), "straight": (0x10, 1), "uturn": (0x37, 1),
     "rideon": (0x20, 0x01), "powerup": (0x50, 1),
@@ -57,7 +57,7 @@ def zwift_token() -> str | None:
 
 def _route_logs() -> None:
     """Send the core's log lines to tretlager.log."""
-    core = logging.getLogger("tretlager.zwindoor")
+    core = logging.getLogger("tretlager.wristpilot")
     if not core.handlers:
         for h in logging.getLogger("tretlager.app").handlers:
             core.addHandler(h)
@@ -75,11 +75,11 @@ class WatchRemote:
         self.sink_error = ""
 
     def _make_runner(self):
-        from ..zwindoor.config import Config
-        from ..zwindoor.runner import BridgeRunner
-        from ..zwindoor.sinks import KeySink, SinkError
+        from ..wristpilot.config import Config
+        from ..wristpilot.runner import BridgeRunner
+        from ..wristpilot.sinks import KeySink, SinkError
         try:
-            from ..zwindoor.sinks.xtest import XTestSink
+            from ..wristpilot.sinks.xtest import XTestSink
             sink = XTestSink()
             self.sink_error = ""
         except SinkError as e:
@@ -120,7 +120,7 @@ class WatchRemote:
         if self.runner:
             self.runner.update_config(**{name: value})
         else:
-            from ..zwindoor.config import Config
+            from ..wristpilot.config import Config
             c = Config.load(CONFIG_FILE)
             setattr(c, name, value)
             c.save(CONFIG_FILE)
@@ -132,8 +132,8 @@ class WatchRemote:
         return self.runner.test_action(*TEST_ACTIONS[name]) is not None
 
     def snapshot(self) -> dict:
-        from ..zwindoor.config import Config
-        from ..zwindoor.protocol import State
+        from ..wristpilot.config import Config
+        from ..wristpilot.protocol import State
         r = self.runner
         cfg = r.config if r else Config.load(CONFIG_FILE)
         s = r.zwift_state if r else State(0)

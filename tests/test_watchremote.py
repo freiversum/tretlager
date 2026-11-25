@@ -1,4 +1,4 @@
-"""Watch remote: Tretlager glue around the vendored ZWindoor core."""
+"""Watch remote: Tretlager glue around the vendored Wristpilot core."""
 
 import asyncio
 import time
@@ -6,12 +6,12 @@ import time
 import pytest
 
 from tretlager.core import paths, state, watchremote
-from tretlager.zwindoor import actions
-from tretlager.zwindoor.ble import Peripheral
-from tretlager.zwindoor.config import Config
-from tretlager.zwindoor.protocol import Command, Result, encode_command
-from tretlager.zwindoor.runner import BridgeRunner
-from tretlager.zwindoor.sinks import RecordingSink
+from tretlager.wristpilot import actions
+from tretlager.wristpilot.ble import Peripheral
+from tretlager.wristpilot.config import Config
+from tretlager.wristpilot.protocol import Command, Result, encode_command
+from tretlager.wristpilot.runner import BridgeRunner
+from tretlager.wristpilot.sinks import RecordingSink
 
 
 @pytest.fixture(autouse=True)

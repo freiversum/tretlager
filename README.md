@@ -246,7 +246,7 @@ is where Tretlager comes in: the old computer can stay, only the system undernea
    XWayland, on NVIDIA via PRIME offload.
 3. The sensor bridge talks to BlueZ on one side and speaks Wahoo's Direct Connect protocol
    (DIRCON) to Zwift on the other, announced over mDNS on the local machine.
-4. Experimental: the *Watch remote* page lets a Garmin watch running the ZWindoor app steer Zwift
+4. Experimental: the *Watch remote* page lets a Garmin watch running the Wristpilot app steer Zwift
    (turns, Ride On, power-up). Tretlager offers a Bluetooth LE service for the watch and types
    Zwift's keyboard shortcuts into the game window, or – with the optional Companion link – talks to
    the game like the Zwift Companion app and shows junctions and power-ups on the watch. Off by

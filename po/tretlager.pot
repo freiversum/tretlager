@@ -2434,7 +2434,7 @@ msgid "connected"
 msgstr ""
 
 #: tretlager/kde/qml/WatchRemotePage.qml:66
-msgid "not connected – start ZWindoor on the watch"
+msgid "not connected – start Wristpilot on the watch"
 msgstr ""
 
 #: tretlager/kde/qml/WatchRemotePage.qml:70
@@ -2612,13 +2612,13 @@ msgid "Set up the watch"
 msgstr ""
 
 #: tretlager/kde/qml/WatchRemotePage.qml:195
-msgid "Install ZWindoor on the watch"
+msgid "Install Wristpilot on the watch"
 msgstr ""
 
 #: tretlager/kde/qml/WatchRemotePage.qml:196
 msgid ""
-"Copy zwindoor.prg to the folder GARMIN/APPS on the watch (USB), then start "
-"ZWindoor from the apps list. It finds this computer by itself."
+"Copy wristpilot.prg to the folder GARMIN/APPS on the watch (USB), then start "
+"Wristpilot from the apps list. It finds this computer by itself."
 msgstr ""
 
 #: tretlager/kde/qml/WelcomePage.qml:9

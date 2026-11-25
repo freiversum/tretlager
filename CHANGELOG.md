@@ -4,6 +4,11 @@ All notable changes to Tretlager. Format based on [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+### Changed
+- *Watch remote*: the watch app ZWindoor is now called Wristpilot. The vendored bridge core moved
+  to `tretlager/wristpilot` and is updated to the current Wristpilot core (Companion frame capture,
+  advertising name "Wristpilot").
+
 ### Added
 - *Photos and clips after the ride* (Overview, Zwift card): after Zwift ends, Tretlager leaves the
   ride's photos and clips where Zwift put them (default), moves them to the Pictures and Videos

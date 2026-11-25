@@ -372,7 +372,7 @@ class Backend(QObject):
         threading.Thread(target=work, daemon=True).start()
 
 
-    # --- Watch remote (Zwindoor) ---
+    # --- Watch remote (Wristpilot) ---
 
     watchRemoteChanged = Signal()
     _watchChanged = Signal()

@@ -306,13 +306,13 @@ Implementation in milestones (core Python `tretlager/core`, UI PySide6 + Kirigam
 
 - [ ] Social preview image with the next update: a screenshot or a designed card of the app, 1280×640 PNG (2:1), under 1 MB, keep text and key content in the centre with ~40 px margin. Keep the source in the repo (`docs/social-preview.png`). Upload by hand under *Settings* | *General* | *Social preview* (there is no API for it). GitHub shows it on topic pages (github.com/topics/…), in Explore, and as the link card on Mastodon, Bluesky and in chats.
 
-## Watch remote (ZWindoor)
-- [x] Page *Watch remote*, GATT service via BlueZ, XTest output into Wine, OpenBikeControl option (core vendored from ZWindoor)
-- [x] First test with the real fēnix 7X Pro on tinytin (2026-11-24): the watch connects to the ZWindoor bridge (BlueZ, AX201) and every action arrives
+## Watch remote (Wristpilot)
+- [x] Page *Watch remote*, GATT service via BlueZ, XTest output into Wine, OpenBikeControl option (core vendored from Wristpilot)
+- [x] First test with the real fēnix 7X Pro on tinytin (2026-11-24): the watch connects to the Wristpilot bridge (BlueZ, AX201) and every action arrives
 - [ ] Same next to the running sensor bridge, latency, 60-minute ride
 - [ ] Check that Zwift under Wine accepts XTest key presses and that KWin honours the activation request (Plasma first shows "python3 is asking to control input devices"; seen with Wine notepad on tinytin, not yet allowed)
 - [ ] If XTest does not reach Zwift: fall back to uinput through the pkexec helper
-- [x] Companion link (ZWindoor phase 4): relay registration with the Tretlager sign-in, game state to the watch, commands without keyboard
+- [x] Companion link (Wristpilot phase 4): relay registration with the Tretlager sign-in, game state to the watch, commands without keyboard
 - [ ] Companion link in a real ride: does the relay accept the Game_Launcher token, does the game connect over plain TCP, which messages carry the turn choices (legacy buttons or IntersectionAhead), are Ride Ons forwarded
 
 - [ ] Watch drops for a few seconds while the bridge (re)connects a sensor on the same adapter (AX201: watch gone 12 s while the HRM-Pro service discovery took 23 s, 2026-11-24). Try the sensors on the UB500 stick and the watch on the built-in adapter.
